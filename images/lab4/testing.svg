@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 280" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="terraform test runs the module against a mock provider instead of real AWS; each run block passes or fails">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5B4A6E"/></marker>
+    <marker id="arg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1F8A6B"/></marker>
+  </defs>
+  <rect x="1" y="1" width="958" height="278" rx="16" fill="#F7F3EC" stroke="#E2D8C6" stroke-width="2"/>
+  <text x="32" y="36" font-size="17" font-weight="700" fill="#2C2133">The test lab: real logic, fake cloud</text>
+
+  <rect x="30" y="60" width="230" height="190" rx="12" fill="#FFFFFF" stroke="#2C2133" stroke-width="2"/>
+  <text x="46" y="86" font-size="11" font-weight="700" fill="#7A6A80" letter-spacing="1.2">exhibit.tftest.hcl</text>
+  <g font-size="12" font-family="Menlo, Consolas, monospace">
+    <text x="46" y="116" fill="#1F8A6B">✓ name_follows_the_convention</text>
+    <text x="46" y="140" fill="#1F8A6B">✓ hours_become_seconds</text>
+    <text x="46" y="164" fill="#1F8A6B">✓ rejects_two_weeks_plus</text>
+    <text x="46" y="188" fill="#1F8A6B">✓ fragile_needs_72_hours</text>
+    <text x="46" y="212" fill="#1F8A6B">✓ refuses_other_regions</text>
+  </g>
+  <text x="46" y="238" font-size="11" fill="#7A6A80">5 passed · ~5 seconds</text>
+
+  <rect x="330" y="90" width="200" height="130" rx="12" fill="#2C2133"/>
+  <text x="430" y="122" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">modules/exhibit</text>
+  <text x="430" y="146" font-size="11" fill="#CFC3D9" text-anchor="middle">validations, preconditions,</text>
+  <text x="430" y="162" font-size="11" fill="#CFC3D9" text-anchor="middle">names, math</text>
+  <text x="430" y="196" font-size="11" fill="#E2B04A" text-anchor="middle" font-family="Menlo, Consolas, monospace">the real code</text>
+
+  <rect x="610" y="60" width="320" height="86" rx="12" fill="#E6F4EE" stroke="#1F8A6B" stroke-width="2"/>
+  <text x="630" y="88" font-size="13" font-weight="800" fill="#1F8A6B">mock_provider "aws"</text>
+  <text x="630" y="108" font-size="11.5" fill="#2C2133">answers instantly with fake IDs</text>
+  <text x="630" y="126" font-size="11.5" fill="#2C2133">override_data: "pretend Region is eu-west-1"</text>
+
+  <rect x="610" y="170" width="320" height="80" rx="12" fill="#FFFFFF" stroke="#C0392B" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="630" y="198" font-size="13" font-weight="800" fill="#A23024">Real AWS: not called</text>
+  <text x="630" y="218" font-size="11.5" fill="#2C2133">no credentials · no cost</text>
+  <text x="630" y="236" font-size="11.5" fill="#2C2133">no name collisions in a shared account</text>
+  <path d="M592,184 L602,236 M576,206 L618,214" stroke="#C0392B" stroke-width="3"/>
+
+  <path d="M260,155 L326,155" stroke="#5B4A6E" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M530,130 L606,103" stroke="#1F8A6B" stroke-width="2.5" marker-end="url(#arg)"/>
+  <path d="M530,180 L568,200" stroke="#C0392B" stroke-width="2" stroke-dasharray="4 4"/>
+</svg>

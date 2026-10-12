@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 250" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Terraform workflow: write, init, validate, plan, apply, destroy">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5B7186"/></marker>
+  </defs>
+  <rect x="1" y="1" width="958" height="248" rx="16" fill="#F5F8FB" stroke="#D3DEEA" stroke-width="2"/>
+  <text x="32" y="44" font-size="20" font-weight="700" fill="#0E2233">The Terraform workflow</text>
+  <text x="928" y="44" font-size="13" fill="#5B7186" text-anchor="end">plan is where you check your unique ID</text>
+
+  <g font-size="15" font-weight="700" text-anchor="middle">
+    <rect x="32" y="74" width="130" height="76" rx="10" fill="#FFFFFF" stroke="#1F5FAE" stroke-width="2"/>
+    <text x="97" y="106" fill="#1F5FAE">WRITE</text>
+    <rect x="184" y="74" width="130" height="76" rx="10" fill="#FFFFFF" stroke="#1F5FAE" stroke-width="2"/>
+    <text x="249" y="106" fill="#1F5FAE">INIT</text>
+    <rect x="336" y="74" width="130" height="76" rx="10" fill="#FFFFFF" stroke="#1F5FAE" stroke-width="2"/>
+    <text x="401" y="106" fill="#1F5FAE">VALIDATE</text>
+    <rect x="488" y="74" width="130" height="76" rx="10" fill="#FFF4EA" stroke="#E2702B" stroke-width="3"/>
+    <text x="553" y="106" fill="#B4521A">PLAN</text>
+    <rect x="640" y="74" width="130" height="76" rx="10" fill="#EAF6EF" stroke="#2E8B57" stroke-width="2"/>
+    <text x="705" y="106" fill="#22703F">APPLY</text>
+    <rect x="792" y="74" width="130" height="76" rx="10" fill="#FBECEA" stroke="#C0392B" stroke-width="2"/>
+    <text x="857" y="106" fill="#A23024">DESTROY</text>
+  </g>
+  <g font-size="12" fill="#3E5468" text-anchor="middle" font-family="Menlo, Consolas, monospace">
+    <text x="97" y="130">*.tf files</text>
+    <text x="249" y="130">get providers</text>
+    <text x="401" y="130">check syntax</text>
+    <text x="553" y="130">preview diff</text>
+    <text x="705" y="130">make it real</text>
+    <text x="857" y="130">clean up</text>
+  </g>
+  <g stroke="#5B7186" stroke-width="2" marker-end="url(#ar)">
+    <line x1="162" y1="112" x2="182" y2="112"/>
+    <line x1="314" y1="112" x2="334" y2="112"/>
+    <line x1="466" y1="112" x2="486" y2="112"/>
+    <line x1="618" y1="112" x2="638" y2="112"/>
+    <line x1="770" y1="112" x2="790" y2="112"/>
+  </g>
+  <path d="M705,150 Q705,212 640,212 L162,212 Q97,212 97,154" fill="none" stroke="#5B7186" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ar)"/>
+  <text x="400" y="202" font-size="13" fill="#3E5468" text-anchor="middle">change the code → plan again → apply only the difference</text>
+</svg>

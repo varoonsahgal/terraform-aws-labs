@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 360" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Before: browsers hit a public S3 website endpoint over HTTP. After: browsers hit CloudFront over HTTPS, CloudFront reads a private bucket with OAC, and a Lambda function URL backed by DynamoDB serves the visitor counter">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5B7186"/></marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#C0392B"/></marker>
+    <marker id="arg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2E8B57"/></marker>
+  </defs>
+  <rect x="1" y="1" width="958" height="358" rx="16" fill="#F5F8FB" stroke="#D3DEEA" stroke-width="2"/>
+
+  <!-- BEFORE -->
+  <text x="32" y="40" font-size="13" font-weight="700" letter-spacing="1.5" fill="#A23024">BEFORE · THE TUTORIAL</text>
+  <rect x="24" y="54" width="300" height="282" rx="12" fill="#FFFFFF" stroke="#E7B7B0" stroke-width="1.5"/>
+  <rect x="104" y="78" width="140" height="44" rx="22" fill="#0E2233"/>
+  <text x="174" y="105" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">Browser</text>
+  <line x1="174" y1="122" x2="174" y2="196" stroke="#C0392B" stroke-width="2.5" marker-end="url(#arr)"/>
+  <text x="186" y="156" font-size="12" fill="#A23024" font-family="Menlo, Consolas, monospace">http:// only</text>
+  <rect x="64" y="200" width="220" height="70" rx="10" fill="#FBECEA" stroke="#C0392B" stroke-width="2"/>
+  <text x="174" y="228" font-size="13" font-weight="700" fill="#A23024" text-anchor="middle">PUBLIC bucket</text>
+  <text x="174" y="250" font-size="11" fill="#A23024" text-anchor="middle" font-family="Menlo, Consolas, monospace">Principal: "*"</text>
+  <text x="174" y="300" font-size="12" fill="#3E5468" text-anchor="middle">Block Public Access OFF.</text>
+  <text x="174" y="318" font-size="12" fill="#3E5468" text-anchor="middle">Every visit hits S3 in one Region.</text>
+
+  <!-- AFTER -->
+  <text x="364" y="40" font-size="13" font-weight="700" letter-spacing="1.5" fill="#22703F">AFTER · LAUNCH WEEK</text>
+  <rect x="356" y="54" width="580" height="282" rx="12" fill="#FFFFFF" stroke="#9ACDB0" stroke-width="1.5"/>
+  <rect x="380" y="78" width="140" height="44" rx="22" fill="#0E2233"/>
+  <text x="450" y="105" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">Browser</text>
+
+  <rect x="580" y="70" width="200" height="60" rx="10" fill="#FFF4EA" stroke="#E2702B" stroke-width="2"/>
+  <text x="680" y="96" font-size="13" font-weight="700" fill="#B4521A" text-anchor="middle">CloudFront edge</text>
+  <text x="680" y="116" font-size="11" fill="#B4521A" text-anchor="middle">cache · function · headers</text>
+  <line x1="520" y1="100" x2="576" y2="100" stroke="#2E8B57" stroke-width="2.5" marker-end="url(#arg)"/>
+  <text x="548" y="92" font-size="11" fill="#22703F" text-anchor="middle" font-family="Menlo, Consolas, monospace">https</text>
+
+  <rect x="580" y="200" width="200" height="70" rx="10" fill="#EAF6EF" stroke="#2E8B57" stroke-width="2"/>
+  <text x="680" y="228" font-size="13" font-weight="700" fill="#22703F" text-anchor="middle">PRIVATE bucket</text>
+  <text x="680" y="250" font-size="11" fill="#22703F" text-anchor="middle">Block Public Access ON</text>
+  <line x1="680" y1="130" x2="680" y2="196" stroke="#2E8B57" stroke-width="2.5" marker-end="url(#arg)"/>
+  <rect x="690" y="150" width="96" height="24" rx="12" fill="#2E8B57"/>
+  <text x="738" y="166" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">OAC signed</text>
+
+  <rect x="380" y="200" width="160" height="70" rx="10" fill="#FFFFFF" stroke="#1F5FAE" stroke-width="2"/>
+  <text x="460" y="226" font-size="13" font-weight="700" fill="#1F5FAE" text-anchor="middle">Lambda URL</text>
+  <text x="460" y="246" font-size="11" fill="#1F5FAE" text-anchor="middle">+ DynamoDB counter</text>
+  <path d="M440,122 L440,196" fill="none" stroke="#1F5FAE" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+  <text x="430" y="166" font-size="11" fill="#1F5FAE" text-anchor="end" font-family="Menlo, Consolas, monospace">fetch()</text>
+
+  <text x="646" y="300" font-size="12" fill="#3E5468" text-anchor="middle">HTTPS everywhere. Cached near the visitor.</text>
+  <text x="646" y="318" font-size="12" fill="#3E5468" text-anchor="middle">The bucket trusts exactly one distribution.</text>
+</svg>

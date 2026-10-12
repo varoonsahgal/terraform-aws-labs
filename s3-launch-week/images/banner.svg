@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 300" font-family="'Courier New', Courier, monospace" role="img" aria-label="Arcade Launch Week: S3 Lab 2">
+  <rect width="960" height="300" rx="18" fill="#120B2E"/>
+  <!-- perspective grid -->
+  <g stroke="#EE4266" stroke-width="1.2" opacity=".45">
+    <path d="M0 230 H960 M0 250 H960 M0 274 H960 M0 300 H960"/>
+    <path d="M480 210 L0 300 M480 210 L160 300 M480 210 L320 300 M480 210 L480 300 M480 210 L640 300 M480 210 L800 300 M480 210 L960 300"/>
+  </g>
+  <rect x="0" y="0" width="960" height="210" rx="18" fill="#120B2E"/>
+  <!-- stars -->
+  <g fill="#FFD23F"><rect x="80" y="40" width="4" height="4"/><rect x="230" y="70" width="3" height="3"/><rect x="760" y="40" width="4" height="4"/><rect x="880" y="96" width="3" height="3"/><rect x="620" y="24" width="3" height="3"/></g>
+  <!-- pixel invader -->
+  <g fill="#3BCEAC" transform="translate(96 74) scale(9)">
+    <rect x="2" y="0" width="1" height="1"/><rect x="8" y="0" width="1" height="1"/>
+    <rect x="3" y="1" width="1" height="1"/><rect x="7" y="1" width="1" height="1"/>
+    <rect x="2" y="2" width="7" height="1"/>
+    <rect x="1" y="3" width="2" height="1"/><rect x="4" y="3" width="3" height="1"/><rect x="8" y="3" width="2" height="1"/>
+    <rect x="0" y="4" width="11" height="1"/>
+    <rect x="0" y="5" width="1" height="1"/><rect x="2" y="5" width="7" height="1"/><rect x="10" y="5" width="1" height="1"/>
+    <rect x="0" y="6" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="8" y="6" width="1" height="1"/><rect x="10" y="6" width="1" height="1"/>
+    <rect x="3" y="7" width="2" height="1"/><rect x="6" y="7" width="2" height="1"/>
+  </g>
+  <text x="300" y="70" font-size="18" font-weight="700" fill="#3BCEAC" letter-spacing="4">S3 LAB 2 · PLAYER ONE READY</text>
+  <text x="296" y="140" font-size="62" font-weight="700" fill="#FFD23F" stroke="#EE4266" stroke-width="1">ARCADE</text>
+  <text x="296" y="196" font-size="54" font-weight="700" fill="#F5F5F5">LAUNCH WEEK</text>
+  <g font-size="15" font-weight="700" letter-spacing="1">
+    <rect x="300" y="236" width="150" height="32" fill="#120B2E" stroke="#3BCEAC" stroke-width="2"/>
+    <text x="375" y="257" fill="#3BCEAC" text-anchor="middle">6 LEVELS</text>
+    <rect x="466" y="236" width="150" height="32" fill="#120B2E" stroke="#FFD23F" stroke-width="2"/>
+    <text x="541" y="257" fill="#FFD23F" text-anchor="middle">~55 MIN</text>
+    <rect x="632" y="236" width="200" height="32" fill="#120B2E" stroke="#EE4266" stroke-width="2"/>
+    <text x="732" y="257" fill="#EE4266" text-anchor="middle">0 PUBLIC BUCKETS</text>
+  </g>
+</svg>

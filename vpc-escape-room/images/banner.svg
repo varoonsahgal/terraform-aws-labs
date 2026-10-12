@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 300" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="The VPC Escape Room">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0B1A2A"/><stop offset="1" stop-color="#1B2F45"/></linearGradient>
+    <radialGradient id="door" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#5E7891"/><stop offset="1" stop-color="#2A3E54"/></radialGradient>
+  </defs>
+  <rect width="960" height="300" rx="18" fill="url(#bg)"/>
+  <!-- grid floor plan lines -->
+  <g stroke="#2C4560" stroke-width="1">
+    <path d="M330 0 V300 M450 0 V300 M570 0 V300 M690 0 V300 M810 0 V300 M0 100 H960 M0 200 H960"/>
+  </g>
+  <!-- vault door -->
+  <circle cx="160" cy="150" r="118" fill="#22364C" stroke="#E2B04A" stroke-width="6"/>
+  <circle cx="160" cy="150" r="96" fill="url(#door)" stroke="#16263A" stroke-width="4"/>
+  <g stroke="#E2B04A" stroke-width="8" stroke-linecap="round">
+    <line x1="160" y1="150" x2="160" y2="84"/><line x1="160" y1="150" x2="217" y2="183"/><line x1="160" y1="150" x2="103" y2="183"/>
+  </g>
+  <circle cx="160" cy="150" r="20" fill="#E2B04A"/>
+  <g fill="#16263A"><circle cx="160" cy="68" r="5"/><circle cx="231" cy="191" r="5"/><circle cx="89" cy="191" r="5"/><circle cx="231" cy="109" r="5"/><circle cx="89" cy="109" r="5"/><circle cx="160" cy="232" r="5"/></g>
+  <!-- title -->
+  <text x="320" y="96" font-size="18" font-weight="700" fill="#E2B04A" letter-spacing="4">VPC LAB 2</text>
+  <text x="318" y="160" font-size="60" font-weight="800" fill="#FFFFFF">The VPC</text>
+  <text x="318" y="222" font-size="60" font-weight="800" fill="#6FB1FF">Escape Room</text>
+  <text x="320" y="262" font-size="17" fill="#C9D8E8">6 rooms · 1 locked door · ~55 minutes · zero SSH keys</text>
+  <!-- key -->
+  <g transform="translate(860 150) rotate(-30)">
+    <circle cx="0" cy="0" r="22" fill="none" stroke="#E2B04A" stroke-width="8"/>
+    <rect x="18" y="-5" width="70" height="10" rx="3" fill="#E2B04A"/>
+    <rect x="66" y="5" width="8" height="16" fill="#E2B04A"/><rect x="80" y="5" width="8" height="12" fill="#E2B04A"/>
+  </g>
+</svg>

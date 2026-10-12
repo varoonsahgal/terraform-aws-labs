@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 340" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Security groups are stateful and remember the request; network ACLs are stateless and check the response separately on an ephemeral port">
+  <defs>
+    <marker id="arg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2E8B57"/></marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#C0392B"/></marker>
+  </defs>
+  <rect x="1" y="1" width="958" height="338" rx="16" fill="#F5F8FB" stroke="#D3DEEA" stroke-width="2"/>
+  <text x="32" y="40" font-size="18" font-weight="700" fill="#0E2233">Bouncer with a memory vs. a turnstile without one</text>
+
+  <!-- SG panel -->
+  <rect x="24" y="60" width="448" height="256" rx="12" fill="#FFFFFF" stroke="#2E8B57" stroke-width="2"/>
+  <text x="44" y="88" font-size="15" font-weight="700" fill="#22703F">Security group · STATEFUL</text>
+  <text x="44" y="108" font-size="12" fill="#3E5468">"I let you in, so I'll let your reply out."</text>
+  <rect x="44" y="140" width="110" height="46" rx="8" fill="#FFF4EA" stroke="#E2702B"/>
+  <text x="99" y="168" font-size="13" font-weight="700" fill="#B4521A" text-anchor="middle">ALB</text>
+  <rect x="340" y="140" width="110" height="46" rx="8" fill="#E8F0FA" stroke="#1F5FAE"/>
+  <text x="395" y="168" font-size="13" font-weight="700" fill="#1F5FAE" text-anchor="middle">App</text>
+  <line x1="154" y1="152" x2="336" y2="152" stroke="#2E8B57" stroke-width="2.5" marker-end="url(#arg)"/>
+  <text x="245" y="144" font-size="11" fill="#22703F" text-anchor="middle" font-family="Menlo, Consolas, monospace">:51234 → :80 ✓</text>
+  <line x1="340" y1="178" x2="158" y2="178" stroke="#2E8B57" stroke-width="2.5" marker-end="url(#arg)"/>
+  <text x="245" y="198" font-size="11" fill="#22703F" text-anchor="middle" font-family="Menlo, Consolas, monospace">:80 → :51234 ✓ (remembered)</text>
+  <rect x="44" y="232" width="408" height="62" rx="8" fill="#EAF6EF"/>
+  <text x="60" y="256" font-size="12.5" fill="#0E2233">One inbound rule is enough.</text>
+  <text x="60" y="276" font-size="12.5" fill="#0E2233">Return traffic is tracked automatically.</text>
+
+  <!-- NACL panel -->
+  <rect x="488" y="60" width="448" height="256" rx="12" fill="#FFFFFF" stroke="#C0392B" stroke-width="2"/>
+  <text x="508" y="88" font-size="15" font-weight="700" fill="#A23024">Network ACL · STATELESS</text>
+  <text x="508" y="108" font-size="12" fill="#3E5468">"Every packet, every direction, checked from scratch."</text>
+  <rect x="508" y="140" width="110" height="46" rx="8" fill="#FFF4EA" stroke="#E2702B"/>
+  <text x="563" y="168" font-size="13" font-weight="700" fill="#B4521A" text-anchor="middle">ALB</text>
+  <rect x="804" y="140" width="110" height="46" rx="8" fill="#E8F0FA" stroke="#1F5FAE"/>
+  <text x="859" y="168" font-size="13" font-weight="700" fill="#1F5FAE" text-anchor="middle">App</text>
+  <line x1="618" y1="152" x2="800" y2="152" stroke="#2E8B57" stroke-width="2.5" marker-end="url(#arg)"/>
+  <text x="709" y="144" font-size="11" fill="#22703F" text-anchor="middle" font-family="Menlo, Consolas, monospace">in: dst :80 ✓</text>
+  <line x1="804" y1="178" x2="700" y2="178" stroke="#C0392B" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arr)"/>
+  <circle cx="688" cy="178" r="11" fill="#C0392B"/><path d="M683,173 L693,183 M693,173 L683,183" stroke="#FFFFFF" stroke-width="2.5"/>
+  <text x="742" y="202" font-size="11" fill="#A23024" text-anchor="middle" font-family="Menlo, Consolas, monospace">out: dst :51234 ✗</text>
+  <rect x="508" y="232" width="408" height="62" rx="8" fill="#FBECEA"/>
+  <text x="524" y="256" font-size="12.5" fill="#0E2233">The reply goes to an ephemeral port</text>
+  <text x="524" y="276" font-size="12.5" fill="#0E2233">(1024–65535). It needs its own rule.</text>
+</svg>

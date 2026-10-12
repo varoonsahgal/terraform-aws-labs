@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 330" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Bootstrapping: a small bootstrap config with local state creates the versioned state bucket; the park, museum and launch configs each store their state under their own key in that bucket">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5B4A6E"/></marker>
+    <marker id="arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#EE4266"/></marker>
+  </defs>
+  <rect x="1" y="1" width="958" height="328" rx="16" fill="#FBF6EE" stroke="#E7D9C4" stroke-width="2"/>
+  <text x="32" y="38" font-size="18" font-weight="700" fill="#2A0E4A">Which came first: the state or the bucket?</text>
+
+  <!-- bootstrap -->
+  <rect x="30" y="70" width="220" height="120" rx="12" fill="#FFFFFF" stroke="#2A0E4A" stroke-width="2"/>
+  <text x="46" y="96" font-size="12" font-weight="700" fill="#2A0E4A" letter-spacing="1">① BOOTSTRAP</text>
+  <text x="46" y="118" font-size="12" fill="#2A0E4A" font-family="Menlo, Consolas, monospace">~/tf-park/bootstrap</text>
+  <rect x="46" y="134" width="188" height="40" rx="6" fill="#FFF3C4"/>
+  <text x="56" y="152" font-size="11.5" fill="#2A0E4A" font-family="Menlo, Consolas, monospace">terraform.tfstate</text>
+  <text x="56" y="167" font-size="11" fill="#6B5B7B">LOCAL — tiny, rarely changes</text>
+
+  <!-- bucket -->
+  <rect x="340" y="56" width="300" height="250" rx="14" fill="#FFFFFF" stroke="#2A0E4A" stroke-width="2.5"/>
+  <text x="358" y="84" font-size="12" font-weight="700" fill="#2A0E4A" letter-spacing="1">② THE VAULT (S3)</text>
+  <text x="358" y="104" font-size="12" fill="#6B5B7B" font-family="Menlo, Consolas, monospace">user07-tfstate-a1b2c3</text>
+  <g font-size="10.5" font-weight="700">
+    <rect x="358" y="114" width="80" height="20" rx="10" fill="#3BCEAC"/><text x="398" y="128" text-anchor="middle" fill="#2A0E4A">versioned</text>
+    <rect x="444" y="114" width="98" height="20" rx="10" fill="#2A0E4A"/><text x="493" y="128" text-anchor="middle" fill="#FFFFFF">no public access</text>
+  </g>
+  <g font-family="Menlo, Consolas, monospace" font-size="11.5" fill="#2A0E4A">
+    <rect x="358" y="148" width="264" height="40" rx="6" fill="#FDE3EA"/>
+    <text x="368" y="166">user07/park/terraform.tfstate</text>
+    <text x="368" y="181" fill="#B0294A">  terraform.tfstate.tflock 🔒</text>
+    <rect x="358" y="196" width="264" height="30" rx="6" fill="#F2EEF7"/>
+    <text x="368" y="216">user07/museum/terraform.tfstate</text>
+    <rect x="358" y="234" width="264" height="30" rx="6" fill="#E3F7F1"/>
+    <text x="368" y="254">user07/launch/terraform.tfstate</text>
+  </g>
+  <text x="358" y="290" font-size="11" fill="#6B5B7B">one bucket, one key per configuration</text>
+
+  <!-- consumers -->
+  <g>
+    <rect x="720" y="146" width="210" height="44" rx="10" fill="#FFFFFF" stroke="#EE4266" stroke-width="2"/><text x="736" y="173" font-size="13" font-weight="700" fill="#2A0E4A">Lab 3 · park</text>
+    <rect x="720" y="198" width="210" height="34" rx="10" fill="#FFFFFF" stroke="#9A86B8" stroke-width="1.5"/><text x="736" y="220" font-size="12.5" fill="#2A0E4A">Lab 4 · museum</text>
+    <rect x="720" y="240" width="210" height="34" rx="10" fill="#FFFFFF" stroke="#3BCEAC" stroke-width="1.5"/><text x="736" y="262" font-size="12.5" fill="#2A0E4A">Lab 5 · launch</text>
+  </g>
+  <text x="720" y="122" font-size="10.5" fill="#6B5B7B" font-family="Menlo, Consolas, monospace">terraform init</text><text x="720" y="137" font-size="10.5" fill="#6B5B7B" font-family="Menlo, Consolas, monospace">  -backend-config=backend.hcl</text>
+
+  <path d="M250,110 L336,110" stroke="#5B4A6E" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="293" y="102" font-size="11" fill="#5B4A6E" text-anchor="middle">creates</text>
+  <path d="M250,160 C300,160 300,220 220,262" fill="none" stroke="#EE4266" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arp)"/>
+  <text x="40" y="262" font-size="11" fill="#B0294A">writes ../park/backend.hcl</text>
+  <text x="40" y="278" font-size="11" fill="#B0294A">(local_file resource)</text>
+  <path d="M716,168 L626,168" stroke="#EE4266" stroke-width="2" marker-end="url(#arp)"/>
+  <path d="M716,215 L626,211" stroke="#5B4A6E" stroke-width="1.5" marker-end="url(#ar)"/>
+  <path d="M716,257 L626,249" stroke="#5B4A6E" stroke-width="1.5" marker-end="url(#ar)"/>
+</svg>

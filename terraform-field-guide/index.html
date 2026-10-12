@@ -1,0 +1,1465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A visual field guide to Terraform: desired state, providers, state, drift, modules, remote state, import, refactoring, guardrails, tests and blue/green deployments.">
+<title>Terraform Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;112,800;125,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: drafting sheet — sticky "title block" index on the left, one readable column of numbered sheets on the right; diagrams drawn like blueprints */
+:root {
+  --paper: #EDF2F6;
+  --sheet: #FBFDFE;
+  --ink: #11283B;
+  --ink-2: #4A6175;
+  --rule: #C6D5E1;
+  --grid: rgba(27, 95, 170, .075);
+  --accent: #1B5FAA;
+  --accent-soft: #DCE8F5;
+  --add: #23824F;
+  --chg: #A86E14;
+  --del: #BE3A2E;
+  --hi: #D9661F;
+  --hi-soft: #FBEADF;
+  --code-bg: #10243A;
+  --code-fg: #DCE7F2;
+  --code-dim: #8FA8BF;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --lab1: #1B5FAA; --lab1-soft: #DCE8F5; --lab2: #D9661F; --lab2-soft: #FBEADF; --lab3: #B8336A; --lab3-soft: #F7DDE8; --lab4: #9A6B0E; --lab4-soft: #F5EAD2; --lab5: #23824F; --lab5-soft: #DDF0E4;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0B1A29; --sheet: #10243A; --ink: #E2EBF4; --ink-2: #9DB2C6; --rule: #284560;
+    --grid: rgba(125, 182, 255, .07); --accent: #7DB6FF; --accent-soft: #17324F;
+    --add: #5CC98D; --chg: #E6B450; --del: #F07B6E; --hi: #F39A5B; --hi-soft: #3A2516;
+    --code-bg: #071320; --code-fg: #DCE7F2; --code-dim: #7F97AE;
+    --lab1: #7DB6FF; --lab1-soft: #17324F; --lab2: #F39A5B; --lab2-soft: #3A2516; --lab3: #F27AA8; --lab3-soft: #3D1A2A; --lab4: #E2B04A; --lab4-soft: #3A2D12; --lab5: #5CC98D; --lab5-soft: #15372A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0B1A29; --sheet: #10243A; --ink: #E2EBF4; --ink-2: #9DB2C6; --rule: #284560;
+  --grid: rgba(125, 182, 255, .07); --accent: #7DB6FF; --accent-soft: #17324F;
+  --add: #5CC98D; --chg: #E6B450; --del: #F07B6E; --hi: #F39A5B; --hi-soft: #3A2516;
+  --code-bg: #071320; --code-fg: #DCE7F2; --code-dim: #7F97AE;
+  --lab1: #7DB6FF; --lab1-soft: #17324F; --lab2: #F39A5B; --lab2-soft: #3A2516; --lab3: #F27AA8; --lab3-soft: #3D1A2A; --lab4: #E2B04A; --lab4-soft: #3A2D12; --lab5: #5CC98D; --lab5-soft: #15372A;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font: 16px/1.65 var(--body);
+  padding-inline: 16px;
+}
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--hi); outline-offset: 2px; }
+code, kbd { font-family: var(--mono); font-size: .9em; }
+:not(pre) > code { background: var(--accent-soft); padding: .08em .35em; border-radius: 3px; overflow-wrap: anywhere; }
+
+.frame { max-width: 1180px; margin: 0 auto; padding-block: 32px 80px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 48px; }
+@media (max-width: 960px) { .frame { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-block: 20px 60px; } }
+
+/* ---------- index ---------- */
+.index { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 20px); align-self: start; max-height: calc(100vh - 40px); overflow-y: auto; font-size: 14px; }
+.index details { border: 1.5px solid var(--ink); background: var(--sheet); }
+.index summary { list-style: none; cursor: pointer; padding: 10px 14px; font: 700 12px/1.2 var(--display); letter-spacing: .14em; text-transform: uppercase; border-bottom: 1.5px solid var(--ink); display: flex; justify-content: space-between; }
+.index summary::-webkit-details-marker { display: none; }
+.index summary::after { content: "−"; }
+.index details:not([open]) summary { border-bottom: 0; }
+.index details:not([open]) summary::after { content: "+"; }
+.index ol { list-style: none; margin: 0; padding: 8px 0 12px; }
+.index li.part { padding: 12px 14px 4px; font: 600 11px/1.2 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
+.index a { display: grid; grid-template-columns: 28px 1fr; padding: 3px 14px; color: var(--ink); text-decoration: none; }
+.index a:hover { background: var(--accent-soft); }
+.index a span:first-child { font-family: var(--mono); font-size: 12px; color: var(--ink-2); padding-top: 2px; }
+@media (max-width: 960px) { .index { position: static; max-height: none; } }
+
+/* ---------- title block hero ---------- */
+.hero { border: 2px solid var(--ink); background: var(--sheet); }
+.hero-top { padding: 28px 28px 20px; display: grid; gap: 12px; }
+.eyebrow { font: 600 12px/1 var(--body); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+h1 { font: 800 clamp(40px, 7vw, 76px)/.95 var(--display); font-stretch: 125%; letter-spacing: -.01em; margin: 0; text-wrap: balance; }
+.lede { font-size: 18px; max-width: 60ch; margin: 0; color: var(--ink-2); }
+.titleblock { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 2px solid var(--ink); }
+.titleblock div { padding: 10px 14px; border-right: 1px solid var(--rule); min-width: 0; }
+.titleblock div:last-child { border-right: 0; }
+.titleblock dt { font: 600 10px/1.2 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); }
+.titleblock dd { margin: 4px 0 0; font: 500 14px/1.3 var(--mono); }
+@media (max-width: 640px) { .titleblock { grid-template-columns: repeat(2, minmax(0, 1fr)); } .titleblock div:nth-child(2) { border-right: 0; } .titleblock div:nth-child(-n+2) { border-bottom: 1px solid var(--rule); } }
+.hero figure { margin: 0; border-top: 1px solid var(--rule); padding: 20px 24px 8px; }
+
+/* ---------- sheets ---------- */
+main { min-width: 0; display: grid; gap: 28px; }
+main > *, .sheet-body > *, .hero > * { min-width: 0; }
+.partmark { margin-top: 28px; display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 6px; }
+.partmark b { font: 800 14px/1 var(--display); font-stretch: 112%; letter-spacing: .12em; text-transform: uppercase; }
+.partmark span { color: var(--ink-2); font-size: 14px; }
+section.sheet { background: var(--sheet); border: 1.5px solid var(--rule); padding: 0 0 8px; scroll-margin-top: 16px; }
+.sheet-head { display: grid; grid-template-columns: auto minmax(0, 1fr); border-bottom: 1.5px solid var(--rule); }
+.sheet-no { font: 800 32px/1 var(--display); font-stretch: 112%; padding: 18px 18px 14px; border-right: 1.5px solid var(--rule); color: var(--accent); font-variant-numeric: tabular-nums; }
+.sheet-title { padding: 14px 20px 12px; min-width: 0; }
+.sheet-title small { display: block; font: 600 11px/1.2 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); }
+h2 { font: 700 clamp(22px, 3.2vw, 30px)/1.15 var(--display); font-stretch: 112%; margin: 4px 0 0; text-wrap: balance; }
+.sheet-body { padding: 18px 24px 8px; display: grid; gap: 16px; }
+.sheet-body > * { margin: 0; }
+.sheet-body p, .sheet-body li { max-width: 68ch; }
+h3 { font: 700 17px/1.3 var(--display); font-stretch: 112%; margin: 8px 0 0; }
+@media (max-width: 640px) { .sheet-body { padding: 16px 16px 6px; } .sheet-no { font-size: 24px; padding: 14px 12px; } }
+
+.takeaway { font: 600 17px/1.4 var(--body); border-top: 1.5px dashed var(--rule); padding-top: 12px; }
+.takeaway::before { content: "Rule of thumb  "; font: 600 11px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+
+/* callouts */
+.note { border: 1.5px solid var(--rule); padding: 12px 16px; display: grid; gap: 6px; }
+.note > b { font: 600 11px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; }
+.note p { margin: 0; }
+.note.analogy { background: var(--accent-soft); border-color: transparent; }
+.note.analogy > b { color: var(--accent); }
+.note.trap { background: var(--hi-soft); border-color: transparent; }
+.note.trap > b { color: var(--hi); }
+.note.shared { border: 1.5px dashed var(--ink); }
+.note.shared > b { color: var(--ink); }
+.note.tidbit > b { color: var(--add); }
+
+pre { margin: 0; background: var(--code-bg); color: var(--code-fg); padding: 14px 16px; overflow-x: auto; font: 13.5px/1.6 var(--mono); border-radius: 2px; }
+pre .c { color: var(--code-dim); }
+pre .k { color: #8CC4FF; }
+pre .s { color: #F2C47B; }
+pre .p-add { color: #7BD9A3; } pre .p-chg { color: #F2C47B; } pre .p-del { color: #F49A8F; }
+
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font: 600 11px/1.2 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); border-bottom: 1.5px solid var(--ink); }
+td code { white-space: nowrap; }
+
+figure.dwg { margin: 0; overflow-x: auto; }
+figure.dwg svg { display: block; width: 100%; min-width: 560px; height: auto; }
+figure.dwg figcaption { font-size: 13px; color: var(--ink-2); margin-top: 6px; }
+figure.dwg figcaption::before { content: "FIG. "; font: 600 11px/1 var(--mono); letter-spacing: .08em; color: var(--accent); }
+
+/* svg drawing classes */
+.d-sheet { fill: var(--sheet); } .d-paper { fill: var(--paper); }
+.d-line { stroke: var(--ink); fill: none; } .d-rule { stroke: var(--rule); fill: none; }
+.d-acc-s { stroke: var(--accent); fill: none; } .d-acc-f { fill: var(--accent); } .d-acc-soft { fill: var(--accent-soft); }
+.d-add-s { stroke: var(--add); fill: none; } .d-add-f { fill: var(--add); }
+.d-chg-s { stroke: var(--chg); fill: none; } .d-chg-f { fill: var(--chg); }
+.d-del-s { stroke: var(--del); fill: none; } .d-del-f { fill: var(--del); }
+.d-hi-s { stroke: var(--hi); fill: none; } .d-hi-f { fill: var(--hi); } .d-hi-soft { fill: var(--hi-soft); }
+.d-ink { fill: var(--ink); } .d-mute { fill: var(--ink-2); }
+svg text { font-family: var(--body); font-size: 13px; }
+svg text { white-space: pre; }
+svg .t-mono text, svg text.t-mono { font-family: var(--mono); }
+svg .t-mono { font-family: var(--mono); font-size: 12.5px; }
+svg .t-b { font-weight: 600; }
+svg .t-h { font-family: var(--display); font-weight: 700; font-size: 15px; }
+svg .t-s { font-size: 11.5px; }
+svg .t-xs { font-size: 10.5px; letter-spacing: .1em; }
+
+/* precedence ladder */
+.ladder { list-style: none; padding: 0; display: grid; gap: 6px; counter-reset: rung; }
+.ladder li { display: grid; grid-template-columns: 34px minmax(0, 1fr); align-items: center; gap: 12px; border: 1.5px solid var(--rule); padding: 8px 12px; counter-increment: rung; }
+.ladder li::before { content: counter(rung); font: 800 18px/1 var(--display); color: var(--accent); text-align: center; }
+.ladder li:last-child { border-color: var(--accent); background: var(--accent-soft); }
+
+/* glossary */
+.gloss-search { display: flex; gap: 10px; align-items: center; }
+.gloss-search label { font: 600 11px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); white-space: nowrap; }
+.gloss-search input { flex: 1; min-width: 0; font: 15px var(--body); padding: 9px 12px; border: 1.5px solid var(--ink); background: var(--paper); color: var(--ink); border-radius: 0; }
+dl.gloss { margin: 0; display: grid; grid-template-columns: minmax(130px, 200px) minmax(0, 1fr); }
+dl.gloss dt, dl.gloss dd { padding: 8px 0; border-bottom: 1px solid var(--rule); margin: 0; }
+dl.gloss dt { font: 600 14px/1.4 var(--mono); padding-right: 14px; }
+dl.gloss dd { font-size: 15px; }
+@media (max-width: 560px) { dl.gloss { grid-template-columns: minmax(0, 1fr); } dl.gloss dt { border-bottom: 0; padding-bottom: 0; } }
+.gloss-empty { color: var(--ink-2); font-style: italic; }
+
+footer { color: var(--ink-2); font-size: 13.5px; border-top: 2px solid var(--ink); padding-top: 14px; }
+.theme-btn { font: 600 11px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; border: 1.5px solid var(--ink); background: var(--sheet); color: var(--ink); padding: 8px 10px; cursor: pointer; margin-top: 12px; width: 100%; }
+
+/* lab roadmap + lab tags */
+.labmap { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 2px solid var(--ink); }
+.labmap a { display: grid; gap: 3px; align-content: start; padding: 12px 14px 14px; text-decoration: none; color: var(--ink); border-right: 1px solid var(--rule); border-top: 5px solid var(--lc); min-width: 0; }
+.labmap a:last-child { border-right: 0; }
+.labmap a:hover { background: var(--lsoft); }
+.labmap b { font: 800 13px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--lc); }
+.labmap .lab-name { font: 700 16px/1.2 var(--display); font-stretch: 112%; }
+.labmap .lab-what { font-size: 13px; color: var(--ink-2); line-height: 1.4; }
+.labmap .lab-sheets { font: 12px/1.3 var(--mono); color: var(--ink-2); margin-top: 4px; }
+.l1 { --lc: var(--lab1); --lsoft: var(--lab1-soft); } .l2 { --lc: var(--lab2); --lsoft: var(--lab2-soft); }
+.l3 { --lc: var(--lab3); --lsoft: var(--lab3-soft); } .l4 { --lc: var(--lab4); --lsoft: var(--lab4-soft); }
+.l5 { --lc: var(--lab5); --lsoft: var(--lab5-soft); }
+@media (max-width: 760px) { .labmap { grid-template-columns: repeat(2, minmax(0, 1fr)); } .labmap a { border-bottom: 1px solid var(--rule); } .labmap a:nth-child(2n) { border-right: 0; } }
+.labtag { display: inline-block; margin-left: 6px; padding: 1px 7px; font: 600 10px/1.5 var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--sheet); background: var(--lc); vertical-align: 1px; }
+h3 .labtag { vertical-align: 2px; }
+</style>
+<style>html { color-scheme: light; } :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); } body { margin: 0; } img { max-width: 100%; } [hidden] { display: none !important; }</style>
+</head>
+<body>
+<div class="frame">
+
+<nav class="index" aria-label="Chapters">
+  <details open id="index-details">
+    <summary>Sheet index</summary>
+    <ol>
+      <li class="part">Ground school</li>
+      <li><a href="#s01"><span>01</span><span>The one idea</span></a></li>
+      <li><a href="#s02"><span>02</span><span>Why infrastructure as code</span></a></li>
+      <li class="part">Part A · The language</li>
+      <li><a href="#s03"><span>03</span><span>Anatomy of a block</span></a></li>
+      <li><a href="#s04"><span>04</span><span>Providers</span></a></li>
+      <li><a href="#s05"><span>05</span><span>Resources vs data sources</span></a></li>
+      <li><a href="#s06"><span>06</span><span>References &amp; the graph</span></a></li>
+      <li><a href="#s07"><span>07</span><span>Variables, locals, outputs</span></a></li>
+      <li><a href="#s08"><span>08</span><span>Expressions toolbox</span></a></li>
+      <li class="part">Part B · The lifecycle</li>
+      <li><a href="#s09"><span>09</span><span>Reading a plan</span></a></li>
+      <li><a href="#s10"><span>10</span><span>State</span></a></li>
+      <li><a href="#s11"><span>11</span><span>Drift</span></a></li>
+      <li><a href="#s12"><span>12</span><span>Update vs replace</span></a></li>
+      <li><a href="#s13"><span>13</span><span>count vs for_each</span></a></li>
+      <li class="part">Part C · Working with others</li>
+      <li><a href="#s14"><span>14</span><span>Shared accounts &amp; naming</span></a></li>
+      <li><a href="#s15"><span>15</span><span>Remote state &amp; locking</span></a></li>
+      <li><a href="#s16"><span>16</span><span>Modules</span></a></li>
+      <li><a href="#s17"><span>17</span><span>Secrets &amp; safety</span></a></li>
+      <li class="part">Part D · Advanced moves</li>
+      <li><a href="#s18"><span>18</span><span>Complex types &amp; optional()</span></a></li>
+      <li><a href="#s19"><span>19</span><span>Dynamic blocks</span></a></li>
+      <li><a href="#s20"><span>20</span><span>Import blocks</span></a></li>
+      <li><a href="#s21"><span>21</span><span>moved &amp; removed</span></a></li>
+      <li><a href="#s22"><span>22</span><span>Guardrails</span></a></li>
+      <li><a href="#s23"><span>23</span><span>terraform test &amp; mocks</span></a></li>
+      <li><a href="#s24"><span>24</span><span>Blue/green</span></a></li>
+      <li class="part">Reference</li>
+      <li><a href="#s25"><span>25</span><span>Crib sheet</span></a></li>
+      <li><a href="#s26"><span>26</span><span>Glossary</span></a></li>
+    </ol>
+  </details>
+  <button class="theme-btn" id="theme-btn" type="button">Switch to dark sheet</button>
+</nav>
+
+<main>
+
+<header class="hero">
+  <div class="hero-top">
+    <span class="eyebrow">Companion to Terraform Labs 1–5</span>
+    <h1>Terraform Field&nbsp;Guide</h1>
+    <p class="lede">Twenty-six sheets on how Terraform thinks: what you write, what it compares, and what it changes. Each lab below lists the sheets to read first. Keep the crib sheet open while you work.</p>
+  </div>
+  <dl class="titleblock">
+    <div><dt>Drawing</dt><dd>TF-FG-01</dd></div>
+    <div><dt>Terraform</dt><dd>1.12</dd></div>
+    <div><dt>AWS provider</dt><dd>~&gt; 6.0</dd></div>
+    <div><dt>Region</dt><dd>us-west-2</dd></div>
+  </dl>
+  <nav class="labmap" aria-label="Labs">
+    <a class="l1" href="#s01"><b>Lab 1</b><span class="lab-name">First Deploy</span><span class="lab-what">One EC2 instance, variables, outputs, state</span><span class="lab-sheets">sheets 01–10</span></a>
+    <a class="l2" href="#s07"><b>Lab 2</b><span class="lab-name">Operation Beacon</span><span class="lab-what">Validation, templates, random names, count, drift</span><span class="lab-sheets">sheets 07–14</span></a>
+    <a class="l3" href="#s15"><b>Lab 3</b><span class="lab-name">Theme Park Tycoon</span><span class="lab-what">Remote state, modules, for_each over data</span><span class="lab-sheets">sheets 13, 15–18, 21</span></a>
+    <a class="l4" href="#s20"><b>Lab 4</b><span class="lab-name">Night at the Museum</span><span class="lab-what">Import, moved, removed, guardrails, tests</span><span class="lab-sheets">sheets 20–23</span></a>
+    <a class="l5" href="#s24"><b>Lab 5</b><span class="lab-name">Launch Day</span><span class="lab-what">Unguided: blue/green with a traffic dial</span><span class="lab-sheets">sheets 19, 22–24</span></a>
+  </nav>
+  <figure class="dwg" style="padding:20px 24px 8px;border-top:1px solid var(--rule)">
+    <svg viewBox="0 0 720 230" role="img" aria-label="The Terraform loop: desired configuration and recorded state are compared with reality to produce a plan, which apply executes">
+      <defs>
+        <marker id="m-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-ink"/></marker>
+        <marker id="m-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-acc-f"/></marker>
+        <marker id="m-add" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-add-f"/></marker>
+        <marker id="m-del" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-del-f"/></marker>
+        <marker id="m-hi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-hi-f"/></marker>
+      </defs>
+      <rect x="10" y="20" width="170" height="80" class="d-sheet d-line" stroke-width="1.5"/>
+      <text x="26" y="46" class="t-xs d-mute">DESIRED</text>
+      <text x="26" y="68" class="t-h d-ink">Your .tf files</text>
+      <text x="26" y="88" class="t-mono t-s d-mute">what should exist</text>
+
+      <rect x="10" y="130" width="170" height="80" class="d-sheet d-line" stroke-width="1.5"/>
+      <text x="26" y="156" class="t-xs d-mute">REMEMBERED</text>
+      <text x="26" y="178" class="t-h d-ink">terraform.tfstate</text>
+      <text x="26" y="198" class="t-mono t-s d-mute">what it built before</text>
+
+      <rect x="270" y="70" width="180" height="90" class="d-acc-soft"/>
+      <rect x="270" y="70" width="180" height="90" class="d-acc-s" stroke-width="2"/>
+      <text x="360" y="104" text-anchor="middle" class="t-h d-ink">terraform plan</text>
+      <text x="360" y="126" text-anchor="middle" class="t-s d-mute">compare all three,</text>
+      <text x="360" y="142" text-anchor="middle" class="t-s d-mute">print the difference</text>
+
+      <rect x="540" y="20" width="170" height="80" class="d-sheet d-line" stroke-width="1.5"/>
+      <text x="556" y="46" class="t-xs d-mute">ACTUAL</text>
+      <text x="556" y="68" class="t-h d-ink">Real AWS</text>
+      <text x="556" y="88" class="t-mono t-s d-mute">what exists now</text>
+
+      <rect x="540" y="130" width="170" height="80" class="d-sheet" />
+      <rect x="540" y="130" width="170" height="80" class="d-add-s" stroke-width="2"/>
+      <text x="556" y="156" class="t-xs d-mute">CHANGE</text>
+      <text x="556" y="178" class="t-h d-ink">terraform apply</text>
+      <text x="556" y="198" class="t-mono t-s d-mute">+ create ~ update − del</text>
+
+      <path d="M180,60 C230,60 230,100 266,100" class="d-line" stroke-width="1.5" marker-end="url(#m-ink)"/>
+      <path d="M180,170 C230,170 230,130 266,130" class="d-line" stroke-width="1.5" marker-end="url(#m-ink)"/>
+      <path d="M540,60 C490,60 490,100 454,100" class="d-line" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#m-ink)"/>
+      <text x="470" y="52" class="t-s d-mute">refresh</text>
+      <path d="M450,140 C495,140 500,170 536,170" class="d-add-s" stroke-width="2" marker-end="url(#m-add)"/>
+      <path d="M625,130 L625,104" class="d-add-s" stroke-width="2" marker-end="url(#m-add)"/>
+      <path d="M540,200 C400,226 300,226 184,196" class="d-add-s" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#m-add)"/>
+      <text x="290" y="207" class="t-s d-mute">state updated after every apply</text>
+    </svg>
+    <figcaption>The whole tool on one sheet. Everything in this guide is a detail of this loop.</figcaption>
+  </figure>
+</header>
+
+<!-- ======================= GROUND SCHOOL ======================= -->
+<div class="partmark"><b>Ground school</b><span>The mental model</span></div>
+
+<section class="sheet" id="s01">
+  <div class="sheet-head"><div class="sheet-no">01</div><div class="sheet-title"><small>Start here</small><h2>The one idea: desired state</h2></div></div>
+  <div class="sheet-body">
+    <p>You don't tell Terraform <em>what to do</em>. You tell it <em>what should exist</em>. Terraform works out the steps by comparing three things: your configuration (desired), its state file (what it remembers building), and the real cloud (actual).</p>
+    <p>That's why running <code>terraform apply</code> twice in a row is safe. The second time, desired already equals actual, so the plan is empty: <code>No changes. Your infrastructure matches the configuration.</code></p>
+    <div class="note analogy"><b>Analogy</b><p>A thermostat. You set 21 °C; you don't say "run the heater for 14 minutes." It measures the room, compares, and acts only on the difference. Turn it up a degree and it does a little more work, not the whole job again.</p></div>
+    <p class="takeaway">Describe the destination. Terraform plans the route, and re-plans it every time.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s02">
+  <div class="sheet-head"><div class="sheet-no">02</div><div class="sheet-title"><small>Motivation</small><h2>Why infrastructure as code</h2></div></div>
+  <div class="sheet-body">
+    <p>Clicking through the console ("ClickOps") is fine for exploring. It breaks down the moment you need to do it twice, explain what you did, or undo it.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Question</th><th>Console clicks</th><th>Terraform</th></tr></thead>
+      <tbody>
+        <tr><td>What exactly did we build?</td><td>Go look, screen by screen</td><td>Read the <code>.tf</code> files</td></tr>
+        <tr><td>Build it again in another Region</td><td>Repeat every click</td><td>Change one variable, apply</td></tr>
+        <tr><td>Who changed the firewall, and why?</td><td>CloudTrail archaeology</td><td>Git history and pull request review</td></tr>
+        <tr><td>Preview a change before it happens</td><td>Not possible</td><td><code>terraform plan</code></td></tr>
+        <tr><td>Tear it all down cleanly</td><td>Hunt for leftovers</td><td><code>terraform destroy</code></td></tr>
+      </tbody>
+    </table></div>
+    <div class="note analogy"><b>Analogy</b><p>A recipe vs. cooking from memory. Both can make dinner. Only one can be shared, reviewed, scaled to forty guests, and made the same way next month.</p></div>
+    <p class="takeaway">If it isn't in code, it isn't repeatable, reviewable, or reliably removable.</p>
+  </div>
+</section>
+
+<!-- ======================= PART A ======================= -->
+<div class="partmark"><b>Part A</b><span>The language (HCL)</span></div>
+
+<section class="sheet" id="s03">
+  <div class="sheet-head"><div class="sheet-no">03</div><div class="sheet-title"><small>Syntax <span class="labtag l1">Lab 1</span></small><h2>Anatomy of a block</h2></div></div>
+  <div class="sheet-body">
+    <p>Almost everything in Terraform is a <strong>block</strong>: a keyword, zero or more labels, and a body of <strong>arguments</strong> in braces. Learn to read one and you can read them all.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 270" role="img" aria-label="An annotated resource block showing block type, resource type, local name, arguments, a reference expression, and a nested block">
+        <rect x="150" y="20" width="420" height="230" fill="var(--code-bg)"/>
+        <g class="t-mono" style="font-size:13.5px">
+          <text x="166" y="50" fill="#8CC4FF">resource <tspan fill="#F2C47B">"aws_instance"</tspan> <tspan fill="#F2C47B">"web"</tspan> <tspan fill="#DCE7F2">{</tspan></text>
+          <text x="166" y="80" fill="#DCE7F2">  instance_type = <tspan fill="#F2C47B">"t3.micro"</tspan></text>
+          <text x="166" y="106" fill="#DCE7F2">  ami           = data.aws_ami.al2023.id</text>
+          <text x="166" y="136" fill="#DCE7F2">  tags = {</text>
+          <text x="166" y="160" fill="#DCE7F2">    Name = <tspan fill="#F2C47B">"${var.user_id}-web"</tspan></text>
+          <text x="166" y="184" fill="#DCE7F2">  }</text>
+          <text x="166" y="210" fill="#8CC4FF">  lifecycle <tspan fill="#DCE7F2">{ create_before_destroy = true }</tspan></text>
+          <text x="166" y="236" fill="#DCE7F2">}</text>
+        </g>
+        <g class="d-acc-s" stroke-width="1.2">
+          <path d="M196,36 L196,10 L120,10"/><path d="M290,36 L290,4"/><path d="M386,36 L386,10 L600,10"/>
+          <path d="M268,74 L130,74"/><path d="M420,100 L590,100"/><path d="M200,150 L130,150"/><path d="M262,204 L130,204"/><path d="M490,156 L590,156"/>
+        </g>
+        <g class="t-s">
+          <text x="10" y="14" class="d-acc-f t-b">block type</text>
+          <text x="296" y="14" class="d-acc-f t-b">resource type</text>
+          <text x="604" y="14" class="d-acc-f t-b">local name</text>
+          <text x="10" y="78" class="d-ink t-b">argument</text>
+          <text x="10" y="92" class="d-mute">name = value</text>
+          <text x="594" y="96" class="d-ink t-b">reference</text>
+          <text x="594" y="110" class="d-mute">to another block</text>
+          <text x="10" y="154" class="d-ink t-b">map value</text>
+          <text x="10" y="208" class="d-ink t-b">nested block</text>
+          <text x="10" y="222" class="d-mute">meta-argument</text>
+          <text x="594" y="152" class="d-ink t-b">interpolation</text>
+          <text x="594" y="166" class="d-mute">string template</text>
+        </g>
+      </svg>
+      <figcaption>The address of this resource is <code>aws_instance.web</code>: type plus local name.</figcaption>
+    </figure>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Block</th><th>What it declares</th></tr></thead>
+      <tbody>
+        <tr><td><code>terraform { }</code></td><td>Settings: required providers, versions, backend</td></tr>
+        <tr><td><code>provider "aws" { }</code></td><td>How to connect to a platform (Region, default tags)</td></tr>
+        <tr><td><code>resource "type" "name" { }</code></td><td>Something Terraform creates and manages</td></tr>
+        <tr><td><code>data "type" "name" { }</code></td><td>Something Terraform only reads</td></tr>
+        <tr><td><code>variable "name" { }</code></td><td>An input</td></tr>
+        <tr><td><code>locals { }</code></td><td>Named, computed values</td></tr>
+        <tr><td><code>output "name" { }</code></td><td>A value to print or hand to others</td></tr>
+        <tr><td><code>module "name" { }</code></td><td>A call to a reusable package of Terraform</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note tidbit"><b>Tidbit</b><p>File names don't matter to Terraform. It loads every <code>.tf</code> file in the directory as one configuration. <code>main.tf</code>, <code>variables.tf</code>, and <code>outputs.tf</code> are a convention for humans.</p></div>
+    <p class="takeaway">Type tells Terraform <em>what</em> it is; the local name is how <em>you</em> refer to it. Neither is the name AWS shows.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s04">
+  <div class="sheet-head"><div class="sheet-no">04</div><div class="sheet-title"><small>Plugins <span class="labtag l1">Lab 1</span></small><h2>Providers</h2></div></div>
+  <div class="sheet-body">
+    <p>Terraform itself knows nothing about AWS. A <strong>provider</strong> is a plugin that translates resource blocks into API calls for one platform. <code>terraform init</code> downloads the providers you list and records their exact versions in <code>.terraform.lock.hcl</code>.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 220" role="img" aria-label="Terraform core connects through provider plugins to AWS, Azure, GitHub, and random">
+        <defs><marker id="m-ink2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-ink"/></marker></defs>
+        <rect x="20" y="70" width="170" height="80" class="d-acc-soft"/>
+        <rect x="20" y="70" width="170" height="80" class="d-acc-s" stroke-width="2"/>
+        <text x="105" y="104" text-anchor="middle" class="t-h d-ink">Terraform core</text>
+        <text x="105" y="126" text-anchor="middle" class="t-s d-mute">graph · plan · state</text>
+        <g>
+          <rect x="290" y="16" width="160" height="38" class="d-sheet d-line" stroke-width="1.5"/><text x="370" y="40" text-anchor="middle" class="t-mono d-ink">hashicorp/aws</text>
+          <rect x="290" y="66" width="160" height="38" class="d-sheet d-line" stroke-width="1.5"/><text x="370" y="90" text-anchor="middle" class="t-mono d-ink">hashicorp/random</text>
+          <rect x="290" y="116" width="160" height="38" class="d-sheet d-line" stroke-width="1.5"/><text x="370" y="140" text-anchor="middle" class="t-mono d-ink">integrations/github</text>
+          <rect x="290" y="166" width="160" height="38" class="d-sheet d-line" stroke-width="1.5"/><text x="370" y="190" text-anchor="middle" class="t-mono d-ink">hashicorp/azurerm</text>
+        </g>
+        <g>
+          <text x="540" y="40" class="t-b d-ink">AWS APIs</text>
+          <text x="540" y="90" class="t-b d-ink">random values (no cloud)</text>
+          <text x="540" y="140" class="t-b d-ink">GitHub API</text>
+          <text x="540" y="190" class="t-b d-ink">Azure APIs</text>
+        </g>
+        <g class="d-line" stroke-width="1.3">
+          <path d="M190,100 C240,100 240,35 286,35" marker-end="url(#m-ink2)"/>
+          <path d="M190,105 C240,105 240,85 286,85" marker-end="url(#m-ink2)"/>
+          <path d="M190,115 C240,115 240,135 286,135" marker-end="url(#m-ink2)"/>
+          <path d="M190,120 C240,120 240,185 286,185" marker-end="url(#m-ink2)"/>
+          <path d="M450,35 L532,35" marker-end="url(#m-ink2)"/><path d="M450,85 L532,85" marker-end="url(#m-ink2)"/>
+          <path d="M450,135 L532,135" marker-end="url(#m-ink2)"/><path d="M450,185 L532,185" marker-end="url(#m-ink2)"/>
+        </g>
+      </svg>
+      <figcaption>One language, thousands of providers on the public registry.</figcaption>
+    </figure>
+<pre><span class="k">terraform</span> {
+  <span class="k">required_providers</span> {
+    aws = {
+      source  = <span class="s">"hashicorp/aws"</span>
+      version = <span class="s">"~&gt; 6.0"</span>   <span class="c"># any 6.x, never 7.0</span>
+    }
+  }
+}</pre>
+    <div class="note analogy"><b>Analogy</b><p>Travel plug adapters. Your laptop (Terraform) has one plug. Each country (platform) needs its own adapter (provider). You pack the adapters you need before the trip: that's <code>init</code>.</p></div>
+    <div class="note trap"><b>Trap</b><p>Added a new provider and got <em>"Inconsistent dependency lock file"</em>? You need to run <code>terraform init</code> again. Commit <code>.terraform.lock.hcl</code> so your whole team gets the same provider versions; never commit the <code>.terraform/</code> folder.</p></div>
+    <p class="takeaway">Providers are plugins with versions. Pin them, lock them, and re-run <code>init</code> when the list changes.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s05">
+  <div class="sheet-head"><div class="sheet-no">05</div><div class="sheet-title"><small>Build vs look up <span class="labtag l1">Lab 1</span></small><h2>Resources vs data sources</h2></div></div>
+  <div class="sheet-body">
+    <figure class="dwg">
+      <svg viewBox="0 0 720 210" role="img" aria-label="A resource is created, owned, changed and destroyed by Terraform. A data source is only read.">
+        <rect x="10" y="10" width="340" height="190" class="d-sheet"/>
+        <rect x="10" y="10" width="340" height="190" class="d-add-s" stroke-width="2"/>
+        <text x="30" y="40" class="t-xs d-add-f t-b">RESOURCE · TERRAFORM OWNS IT</text>
+        <text x="30" y="68" class="t-mono d-ink">resource "aws_instance" "web"</text>
+        <g class="t-s">
+          <rect x="30" y="88" width="68" height="28" class="d-add-f"/><text x="64" y="107" text-anchor="middle" fill="var(--sheet)" class="t-b">create</text>
+          <rect x="106" y="88" width="68" height="28" class="d-chg-f"/><text x="140" y="107" text-anchor="middle" fill="var(--sheet)" class="t-b">update</text>
+          <rect x="182" y="88" width="68" height="28" class="d-acc-f"/><text x="216" y="107" text-anchor="middle" fill="var(--sheet)" class="t-b">track</text>
+          <rect x="258" y="88" width="72" height="28" class="d-del-f"/><text x="294" y="107" text-anchor="middle" fill="var(--sheet)" class="t-b">destroy</text>
+        </g>
+        <text x="30" y="148" class="t-s d-ink">Appears in state. <tspan class="t-mono">destroy</tspan> removes it.</text>
+        <text x="30" y="170" class="t-s d-mute">EC2 instances, buckets, security groups…</text>
+
+        <rect x="370" y="10" width="340" height="190" class="d-sheet"/>
+        <rect x="370" y="10" width="340" height="190" class="d-acc-s" stroke-width="2" stroke-dasharray="6 4"/>
+        <text x="390" y="40" class="t-xs d-acc-f t-b">DATA SOURCE · READ ONLY</text>
+        <text x="390" y="68" class="t-mono d-ink">data "aws_vpc" "default"</text>
+        <g class="t-s">
+          <rect x="390" y="88" width="68" height="28" class="d-acc-soft"/><rect x="390" y="88" width="68" height="28" class="d-acc-s"/><text x="424" y="107" text-anchor="middle" class="d-ink t-b">read</text>
+          <text x="470" y="107" class="d-mute">…and that's all</text>
+        </g>
+        <text x="390" y="148" class="t-s d-ink">Re-read on every plan. <tspan class="t-mono">destroy</tspan> leaves it alone.</text>
+        <text x="390" y="170" class="t-s d-mute">Latest AMI, default VPC, account ID, AZs…</text>
+      </svg>
+      <figcaption>Lab 1 looked up the AMI, VPC, and subnets with data sources, and created only the instance.</figcaption>
+    </figure>
+    <p>Reference a data source with the <code>data.</code> prefix: <code>data.aws_ami.amazon_linux.id</code>. Reference a resource without it: <code>aws_instance.app_server.id</code>.</p>
+    <div class="note shared"><b>Shared-account rule</b><p>Use data sources for shared things you must not own, like the default VPC. If you wrote <code>resource "aws_vpc"</code> for it, Terraform would try to create (and later destroy) a VPC instead of finding the one everyone uses.</p></div>
+    <p class="takeaway">Own it? <code>resource</code>. Just need to know about it? <code>data</code>.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s06">
+  <div class="sheet-head"><div class="sheet-no">06</div><div class="sheet-title"><small>Ordering for free <span class="labtag l1">Lab 1</span></small><h2>References &amp; the dependency graph</h2></div></div>
+  <div class="sheet-body">
+    <p>Whenever one block mentions another (<code>vpc_id = aws_vpc.main.id</code>), Terraform draws an arrow between them. All the arrows together form a <strong>dependency graph</strong>. Terraform creates things in arrow order, destroys them in reverse, and does everything without an arrow between it <strong>in parallel</strong>.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 230" role="img" aria-label="Dependency graph: VPC to subnet to instance, security group to instance, AMI data source to instance; bucket to object runs in parallel">
+        <defs><marker id="m-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-ink"/></marker></defs>
+        <g class="t-mono">
+          <rect x="10" y="20" width="150" height="40" class="d-sheet d-line" stroke-width="1.5"/><text x="85" y="45" text-anchor="middle" class="d-ink">aws_vpc.main</text>
+          <rect x="230" y="20" width="170" height="40" class="d-sheet d-line" stroke-width="1.5"/><text x="315" y="45" text-anchor="middle" class="d-ink">aws_subnet.app</text>
+          <rect x="230" y="80" width="170" height="40" class="d-sheet d-line" stroke-width="1.5"/><text x="315" y="105" text-anchor="middle" class="d-ink">aws_security_group</text>
+          <rect x="230" y="140" width="170" height="40" class="d-sheet d-acc-s" stroke-width="1.5" stroke-dasharray="5 4"/><text x="315" y="165" text-anchor="middle" class="d-ink">data.aws_ami.al</text>
+          <rect x="480" y="80" width="170" height="40" class="d-acc-soft"/><rect x="480" y="80" width="170" height="40" class="d-acc-s" stroke-width="2"/><text x="565" y="105" text-anchor="middle" class="d-ink t-b">aws_instance.web</text>
+          <rect x="10" y="190" width="150" height="34" class="d-sheet d-rule" stroke-width="1.5"/><text x="85" y="212" text-anchor="middle" class="d-mute">aws_s3_bucket.b</text>
+          <rect x="230" y="190" width="170" height="34" class="d-sheet d-rule" stroke-width="1.5"/><text x="315" y="212" text-anchor="middle" class="d-mute">aws_s3_object.o</text>
+        </g>
+        <g class="d-line" stroke-width="1.4">
+          <path d="M160,40 L226,40" marker-end="url(#m-g)"/>
+          <path d="M160,50 C200,50 190,100 226,100" marker-end="url(#m-g)"/>
+          <path d="M400,40 C440,40 440,92 476,92" marker-end="url(#m-g)"/>
+          <path d="M400,100 L476,100" marker-end="url(#m-g)"/>
+          <path d="M400,160 C440,160 440,108 476,108" marker-end="url(#m-g)"/>
+          <path d="M160,207 L226,207" marker-end="url(#m-g)" class="d-rule"/>
+        </g>
+        <text x="440" y="200" class="t-s d-mute">independent chain: built at the same time</text>
+        <text x="440" y="216" class="t-s d-mute">as the instance chain above</text>
+      </svg>
+      <figcaption>See your own graph with <code>terraform graph</code> (it prints DOT format for Graphviz).</figcaption>
+    </figure>
+    <p>The address pattern for references is always <code>TYPE.NAME.ATTRIBUTE</code>, with <code>data.</code> in front for data sources and <code>var.</code>, <code>local.</code>, or <code>module.</code> for the others.</p>
+    <div class="note trap"><b>Trap</b><p>Reaching for <code>depends_on</code> by habit. You only need it when a dependency is real but invisible in the code (for example, an IAM policy that must exist before an app starts). If you can express it as a reference, do that instead.</p></div>
+    <p class="takeaway">Reference, don't sequence. The graph handles order and parallelism.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s07">
+  <div class="sheet-head"><div class="sheet-no">07</div><div class="sheet-title"><small>Inputs, workings, results <span class="labtag l1">Lab 1</span> <span class="labtag l2">Lab 2</span></small><h2>Variables, locals, outputs</h2></div></div>
+  <div class="sheet-body">
+    <p>A Terraform configuration behaves like a function. <strong>Variables</strong> are its parameters, <strong>locals</strong> are its working variables, and <strong>outputs</strong> are its return values.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 200" role="img" aria-label="Variables flow into locals and resources, which produce outputs, like a function's parameters, body and return value">
+        <defs><marker id="m-v" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-ink"/></marker></defs>
+        <text x="10" y="22" class="t-mono d-mute">function config(</text>
+        <rect x="10" y="34" width="170" height="130" class="d-sheet d-hi-s" stroke-width="2"/>
+        <text x="26" y="58" class="t-xs d-hi-f t-b">VARIABLES</text>
+        <text x="26" y="84" class="t-mono d-ink">var.user_id</text>
+        <text x="26" y="106" class="t-mono d-ink">var.beacon_count</text>
+        <text x="26" y="140" class="t-s d-mute">set from .tfvars, -var,</text>
+        <text x="26" y="155" class="t-s d-mute">or TF_VAR_ env vars</text>
+        <text x="190" y="22" class="t-mono d-mute">) {</text>
+
+        <rect x="250" y="34" width="210" height="58" class="d-sheet d-line" stroke-width="1.5"/>
+        <text x="266" y="56" class="t-xs d-ink t-b">LOCALS</text>
+        <text x="266" y="80" class="t-mono t-s d-ink">name_prefix = "${var.user_id}-lab2"</text>
+        <rect x="250" y="106" width="210" height="58" class="d-acc-soft"/><rect x="250" y="106" width="210" height="58" class="d-acc-s" stroke-width="1.5"/>
+        <text x="266" y="128" class="t-xs d-acc-f t-b">RESOURCES</text>
+        <text x="266" y="152" class="t-mono t-s d-ink">Name = local.name_prefix</text>
+
+        <text x="480" y="22" class="t-mono d-mute">return</text>
+        <rect x="530" y="34" width="180" height="130" class="d-sheet d-add-s" stroke-width="2"/>
+        <text x="546" y="58" class="t-xs d-add-f t-b">OUTPUTS</text>
+        <text x="546" y="84" class="t-mono d-ink">beacon_urls</text>
+        <text x="546" y="106" class="t-mono d-ink">bucket_name</text>
+        <text x="546" y="140" class="t-s d-mute">printed after apply;</text>
+        <text x="546" y="155" class="t-s d-mute">readable by other configs</text>
+        <text x="10" y="192" class="t-mono d-mute">}</text>
+
+        <g class="d-line" stroke-width="1.4">
+          <path d="M180,70 L246,64" marker-end="url(#m-v)"/><path d="M180,110 L246,130" marker-end="url(#m-v)"/>
+          <path d="M355,92 L355,102" marker-end="url(#m-v)"/>
+          <path d="M460,135 L526,110" marker-end="url(#m-v)"/>
+        </g>
+      </svg>
+      <figcaption>Callers can set variables. Nobody outside can set a local, which makes locals ideal for naming conventions.</figcaption>
+    </figure>
+<pre><span class="k">variable</span> <span class="s">"user_id"</span> {
+  type        = string
+  description = <span class="s">"Your assigned ID, e.g. user07"</span>
+
+  <span class="k">validation</span> {
+    condition     = can(regex(<span class="s">"^user[0-9]{2}$"</span>, var.user_id))
+    error_message = <span class="s">"user_id must look like user07."</span>
+  }
+}</pre>
+    <h3>Where values come from (later wins)</h3>
+    <ol class="ladder">
+      <li><span><code>default</code> in the variable block</span></li>
+      <li><span><code>TF_VAR_user_id</code> environment variable</span></li>
+      <li><span><code>terraform.tfvars</code> (loaded automatically)</span></li>
+      <li><span>Any <code>*.auto.tfvars</code> files, alphabetically</span></li>
+      <li><span><code>-var</code> and <code>-var-file</code> on the command line, in the order given</span></li>
+    </ol>
+    <div class="note trap"><b>Trap</b><p><code>testing.tfvars</code> is <em>not</em> loaded automatically, only <code>terraform.tfvars</code> and <code>*.auto.tfvars</code> are. Forget <code>-var-file="testing.tfvars"</code> and Terraform prompts you for every variable without a default.</p></div>
+    <p class="takeaway">Variables are the knobs, locals are the wiring, outputs are the gauges.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s08">
+  <div class="sheet-head"><div class="sheet-no">08</div><div class="sheet-title"><small>Expressions <span class="labtag l2">Lab 2</span></small><h2>The expressions toolbox</h2></div></div>
+  <div class="sheet-body">
+    <p>HCL isn't a full programming language, but it has enough to compute names, build lists, and render files. These cover most real configurations:</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>You want to…</th><th>Use</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>Build a string</td><td>Interpolation</td><td><code>"${var.user_id}-web"</code></td></tr>
+        <tr><td>Choose between two values</td><td>Conditional</td><td><code>var.prod ? "m7i.large" : "t3.micro"</code></td></tr>
+        <tr><td>Pull one attribute from many</td><td>Splat</td><td><code>aws_instance.web[*].public_ip</code></td></tr>
+        <tr><td>Transform a list</td><td><code>for</code></td><td><code>[for ip in local.ips : "http://${ip}"]</code></td></tr>
+        <tr><td>Build a map</td><td><code>for</code> with <code>=&gt;</code></td><td><code>{ for i in aws_instance.web : i.id =&gt; i.private_ip }</code></td></tr>
+        <tr><td>Fill a file with values</td><td><code>templatefile()</code></td><td><code>templatefile("boot.sh.tftpl", { name = var.user_id })</code></td></tr>
+        <tr><td>Write JSON safely</td><td><code>jsonencode()</code></td><td><code>jsonencode({ owner = var.user_id })</code></td></tr>
+        <tr><td>Test without crashing</td><td><code>can()</code>, <code>try()</code></td><td><code>try(var.tags["Owner"], "unknown")</code></td></tr>
+        <tr><td>Carve up a network</td><td><code>cidrsubnet()</code></td><td><code>cidrsubnet("10.0.0.0/16", 8, 7)</code> → <code>10.0.7.0/24</code></td></tr>
+      </tbody>
+    </table></div>
+    <div class="note tidbit"><b>Try it</b><p><code>terraform console</code> opens a calculator with your variables and state loaded. Type <code>local.name_prefix</code> or <code>upper(var.user_id)</code> and see the answer instantly. Nothing is created.</p></div>
+    <div class="note trap"><b>Trap</b><p>In a <code>.tftpl</code> file, <em>every</em> <code>${…}</code> belongs to Terraform, even inside comments. Write <code>$${HOME}</code> when you want a literal <code>${HOME}</code> to reach bash. A bare <code>$HOME</code> without braces passes through untouched.</p></div>
+    <p class="takeaway">When an expression gets clever, test it in <code>terraform console</code> before you plan.</p>
+  </div>
+</section>
+
+<!-- ======================= PART B ======================= -->
+<div class="partmark"><b>Part B</b><span>The lifecycle</span></div>
+
+<section class="sheet" id="s09">
+  <div class="sheet-head"><div class="sheet-no">09</div><div class="sheet-title"><small>The most important habit <span class="labtag l1">Lab 1</span></small><h2>Reading a plan</h2></div></div>
+  <div class="sheet-body">
+    <p>The plan is Terraform asking for permission. Read it the way you'd read a contract: symbols first, then the summary line, then anything marked <code># forces replacement</code>.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Symbol</th><th>Meaning</th><th>Downtime risk</th></tr></thead>
+      <tbody>
+        <tr><td><code style="color:var(--add);background:transparent;font-weight:600">+</code></td><td>Create</td><td>None</td></tr>
+        <tr><td><code style="color:var(--chg);background:transparent;font-weight:600">~</code></td><td>Update in place: same object, new settings</td><td>Usually none</td></tr>
+        <tr><td><code style="color:var(--del);background:transparent;font-weight:600">-</code></td><td>Destroy</td><td>It's gone</td></tr>
+        <tr><td><code style="color:var(--del);background:transparent;font-weight:600">-/+</code></td><td>Replace: destroy, <em>then</em> create</td><td><strong>High</strong>: gap between the two, new ID and IP</td></tr>
+        <tr><td><code style="color:var(--add);background:transparent;font-weight:600">+/-</code></td><td>Replace: create, <em>then</em> destroy (<code>create_before_destroy</code>)</td><td>Lower: overlap instead of a gap</td></tr>
+        <tr><td><code style="color:var(--accent);background:transparent;font-weight:600">&lt;=</code></td><td>Read a data source during apply</td><td>None</td></tr>
+      </tbody>
+    </table></div>
+<pre>  <span class="c"># aws_instance.beacon[0] must be replaced</span>
+<span class="p-del">-/+</span> resource "aws_instance" "beacon" {
+      <span class="p-chg">~</span> id         = "i-0a1b2c" -&gt; (known after apply)
+      <span class="p-chg">~</span> public_ip  = "54.188.12.34" -&gt; (known after apply)
+      <span class="p-chg">~</span> user_data  = "3f9c…" -&gt; "a71e…" <span class="p-del"># forces replacement</span>
+    }
+
+Plan: <span class="p-add">1 to add</span>, 0 to change, <span class="p-del">1 to destroy</span>.</pre>
+    <div class="note shared"><b>Shared-account rule</b><p>Before typing <code>yes</code>, find every <code>Name</code> in the plan and check it contains <em>your</em> ID. A destroy count you didn't expect means stop and ask.</p></div>
+    <p class="takeaway">Read the summary line out loud. If the numbers surprise you, don't type <code>yes</code>.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s10">
+  <div class="sheet-head"><div class="sheet-no">10</div><div class="sheet-title"><small>Terraform's memory <span class="labtag l1">Lab 1</span></small><h2>State</h2></div></div>
+  <div class="sheet-body">
+    <p><code>terraform.tfstate</code> is a JSON file that maps every address in your code to a real object ID in the cloud. Without it, Terraform couldn't tell <em>your</em> <code>aws_instance.web</code> apart from the 40 other instances in the account.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 200" role="img" aria-label="State maps code addresses to real AWS object IDs">
+        <defs><marker id="m-s" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-ink"/></marker></defs>
+        <text x="10" y="20" class="t-xs d-mute t-b">IN YOUR CODE</text>
+        <text x="260" y="20" class="t-xs d-acc-f t-b">IN STATE (THE LEDGER)</text>
+        <text x="550" y="20" class="t-xs d-mute t-b">IN AWS</text>
+        <rect x="250" y="30" width="230" height="160" class="d-acc-soft"/>
+        <g class="t-mono">
+          <text x="10" y="64" class="d-ink">aws_instance.web</text>
+          <text x="10" y="114" class="d-ink">aws_security_group.web</text>
+          <text x="10" y="164" class="d-ink">aws_s3_bucket.logs</text>
+          <text x="266" y="58" class="d-ink t-s">aws_instance.web</text><text x="266" y="74" class="d-acc-f t-s">  id = "i-0a1b2c3d"</text>
+          <text x="266" y="108" class="d-ink t-s">aws_security_group.web</text><text x="266" y="124" class="d-acc-f t-s">  id = "sg-09f8e7"</text>
+          <text x="266" y="158" class="d-ink t-s">aws_s3_bucket.logs</text><text x="266" y="174" class="d-acc-f t-s">  id = "user07-logs-x1"</text>
+          <text x="550" y="64" class="d-ink">i-0a1b2c3d</text>
+          <text x="550" y="114" class="d-ink">sg-09f8e7</text>
+          <text x="550" y="164" class="d-ink">user07-logs-x1</text>
+        </g>
+        <g class="d-line" stroke-width="1.2">
+          <path d="M200,60 L246,60" marker-end="url(#m-s)"/><path d="M200,110 L246,110" marker-end="url(#m-s)"/><path d="M200,160 L246,160" marker-end="url(#m-s)"/>
+          <path d="M480,60 L544,60" marker-end="url(#m-s)"/><path d="M480,110 L544,110" marker-end="url(#m-s)"/><path d="M480,160 L544,160" marker-end="url(#m-s)"/>
+        </g>
+      </svg>
+      <figcaption>Delete the state file and Terraform forgets these objects exist. They keep running and billing; Terraform just stops managing them.</figcaption>
+    </figure>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>terraform state list</code></td><td>Every address Terraform is tracking</td></tr>
+        <tr><td><code>terraform state show ADDR</code></td><td>All recorded attributes of one object</td></tr>
+        <tr><td><code>moved { from = … to = … }</code></td><td>Rename an address without rebuilding the object</td></tr>
+        <tr><td><code>import { to = … id = … }</code></td><td>Adopt an existing object into state</td></tr>
+        <tr><td><code>removed { from = … }</code></td><td>Stop managing an object without destroying it</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note analogy"><b>Analogy</b><p>A coat-check ledger. Your ticket says "hook 14"; the ledger says hook 14 is the blue coat. Lose the ledger and the coats are still on the hooks, but nobody can say whose is whose.</p></div>
+    <div class="note trap"><b>Trap</b><p>Never edit <code>terraform.tfstate</code> by hand, and never copy someone else's. Use the <code>moved</code>, <code>import</code>, and <code>removed</code> blocks, which show up in the plan for review.</p></div>
+    <p class="takeaway">Code says what you want. State says what you own. Lose the state, lose ownership.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s11">
+  <div class="sheet-head"><div class="sheet-no">11</div><div class="sheet-title"><small>When reality wanders <span class="labtag l2">Lab 2</span></small><h2>Drift</h2></div></div>
+  <div class="sheet-body">
+    <p><strong>Drift</strong> is any change made outside Terraform: a console click, a CLI command, another tool. Every <code>plan</code> starts with a <strong>refresh</strong> that reads the real objects, so drift shows up as a proposed change back to what the code says.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 200" role="img" aria-label="Drift: code says no Sabotage tag; someone adds it in AWS; refresh records it; plan proposes removing it">
+        <defs>
+          <marker id="m-d1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-ink"/></marker>
+          <marker id="m-d2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-del-f"/></marker>
+        </defs>
+        <rect x="10" y="20" width="200" height="100" class="d-sheet d-acc-s" stroke-width="2"/>
+        <text x="26" y="46" class="t-xs d-acc-f t-b">CODE</text>
+        <text x="26" y="74" class="t-mono t-s d-ink">tags = { Name = "web" }</text>
+        <rect x="260" y="20" width="200" height="100" class="d-sheet d-line" stroke-width="1.5"/>
+        <text x="276" y="46" class="t-xs d-mute t-b">STATE AFTER REFRESH</text>
+        <text x="276" y="74" class="t-mono t-s d-ink">Name     = "web"</text>
+        <text x="276" y="94" class="t-mono t-s d-del-f t-b">Sabotage = "true"</text>
+        <rect x="510" y="20" width="200" height="100" class="d-hi-soft"/>
+        <rect x="510" y="20" width="200" height="100" class="d-del-s" stroke-width="2"/>
+        <text x="526" y="46" class="t-xs d-del-f t-b">REAL AWS</text>
+        <text x="526" y="74" class="t-s d-ink">someone ran</text>
+        <text x="526" y="94" class="t-mono t-s d-ink">aws ec2 create-tags</text>
+        <path d="M510,70 L464,70" class="d-del-s" stroke-width="2" marker-end="url(#m-d2)"/>
+        <path d="M260,70 L214,70" class="d-line" stroke-width="1.5" marker-end="url(#m-d1)"/>
+        <text x="487" y="62" text-anchor="middle" class="t-s d-del-f">read</text>
+        <text x="237" y="62" text-anchor="middle" class="t-s d-mute">diff</text>
+        <rect x="10" y="144" width="700" height="44" fill="var(--code-bg)"/>
+        <text x="26" y="171" class="t-mono" fill="#F2C47B">~ update in-place</text>
+        <text x="200" y="171" class="t-mono" fill="#F49A8F">- "Sabotage" = "true" -&gt; null</text>
+      </svg>
+      <figcaption>Terraform treats the code as the source of truth and proposes to undo the manual change.</figcaption>
+    </figure>
+    <ul>
+      <li><code>terraform plan -refresh-only</code> shows drift without proposing fixes.</li>
+      <li><code>terraform apply -refresh-only</code> accepts reality into state, for when the manual change was deliberate and you'll update the code next.</li>
+    </ul>
+    <div class="note tidbit"><b>Tidbit</b><p>Terraform only notices drift in arguments it manages. Stop an EC2 instance in the console and <code>plan</code> won't restart it: <code>aws_instance</code> doesn't manage power state. (That's what <code>aws_ec2_instance_state</code> is for.)</p></div>
+    <p class="takeaway">If you clicked it, Terraform will un-click it. Change the code instead.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s12">
+  <div class="sheet-head"><div class="sheet-no">12</div><div class="sheet-title"><small>The costly difference <span class="labtag l2">Lab 2</span></small><h2>Update vs replace</h2></div></div>
+  <div class="sheet-body">
+    <p>Some settings can change on a live object (tags, instance type after a stop/start). Others are baked in at creation (an instance's AMI or subnet, a bucket's name). Changing a baked-in setting forces <strong>replacement</strong>: a brand-new object with a new ID.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 180" role="img" aria-label="Changing a tag updates the same instance; changing the AMI replaces it with a new instance ID">
+        <defs><marker id="m-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-ink"/></marker></defs>
+        <text x="10" y="40" class="t-b d-ink">Change a tag</text>
+        <rect x="170" y="16" width="150" height="40" class="d-sheet d-line" stroke-width="1.5"/><text x="245" y="41" text-anchor="middle" class="t-mono t-s d-ink">i-0a1b · Name=old</text>
+        <path d="M320,36 L396,36" class="d-line" stroke-width="1.5" marker-end="url(#m-r)"/><text x="358" y="28" text-anchor="middle" class="t-mono d-chg-f t-b">~</text>
+        <rect x="400" y="16" width="150" height="40" class="d-sheet d-chg-s" stroke-width="2"/><text x="475" y="41" text-anchor="middle" class="t-mono t-s d-ink">i-0a1b · Name=new</text>
+        <text x="566" y="41" class="t-s d-mute">same server</text>
+
+        <text x="10" y="120" class="t-b d-ink">Change the AMI</text>
+        <rect x="170" y="96" width="150" height="40" class="d-sheet d-del-s" stroke-width="2" stroke-dasharray="5 4"/><text x="245" y="121" text-anchor="middle" class="t-mono t-s d-mute">i-0a1b · old AMI</text>
+        <path d="M320,116 L396,116" class="d-line" stroke-width="1.5" marker-end="url(#m-r)"/><text x="358" y="108" text-anchor="middle" class="t-mono d-del-f t-b">-/+</text>
+        <rect x="400" y="96" width="150" height="40" class="d-sheet d-add-s" stroke-width="2"/><text x="475" y="121" text-anchor="middle" class="t-mono t-s d-ink">i-9z8y · new AMI</text>
+        <text x="566" y="121" class="t-s d-mute">new ID, new IP</text>
+        <text x="10" y="166" class="t-s d-mute">Look for <tspan class="t-mono">"# forces replacement"</tspan> in the plan to see which argument caused it.</text>
+      </svg>
+      <figcaption>The provider docs mark which arguments force replacement.</figcaption>
+    </figure>
+    <h3>The <code>lifecycle</code> meta-argument</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Setting</th><th>Effect</th><th>Use it for</th></tr></thead>
+      <tbody>
+        <tr><td><code>create_before_destroy = true</code></td><td>Build the replacement first, then delete the old one</td><td>Avoiding gaps (watch for unique-name clashes)</td></tr>
+        <tr><td><code>prevent_destroy = true</code></td><td>Any plan that would destroy it fails</td><td>Databases, state buckets</td></tr>
+        <tr><td><code>ignore_changes = [tags]</code></td><td>Don't fight changes made elsewhere to these arguments</td><td>Tags set by other tools, ASG desired count</td></tr>
+        <tr><td><code>replace_triggered_by = [...]</code></td><td>Replace when something else changes</td><td>Restarting on config change</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note trap"><b>Trap</b><p><code>create_before_destroy</code> plus a fixed name fails: the new object can't take the name while the old one still holds it. That's another reason for prefixes and random suffixes.</p></div>
+    <p class="takeaway">A <code>~</code> is a tweak. A <code>-/+</code> is a rebuild. Know which one you're approving.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s13">
+  <div class="sheet-head"><div class="sheet-no">13</div><div class="sheet-title"><small>Many of a thing <span class="labtag l2">Lab 2</span> <span class="labtag l3">Lab 3</span></small><h2>count vs for_each</h2></div></div>
+  <div class="sheet-body">
+    <p>Both make multiple copies of a resource. The difference is how each copy is <strong>addressed</strong>, and that decides what happens when the list changes.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 250" role="img" aria-label="Removing the first item from a count list shifts every index and rebuilds the rest; removing a key from for_each only destroys that one item">
+        <text x="10" y="22" class="t-xs d-del-f t-b">count · ADDRESSED BY POSITION</text>
+        <text x="10" y="46" class="t-mono t-s d-mute">names = ["alpha", "bravo", "charlie"]  →  remove "alpha"</text>
+        <g class="t-mono t-s">
+          <rect x="10" y="60" width="110" height="34" class="d-sheet d-del-s" stroke-width="2" stroke-dasharray="4 3"/><text x="65" y="82" text-anchor="middle" class="d-ink">[0] alpha</text>
+          <rect x="130" y="60" width="110" height="34" class="d-sheet d-line" stroke-width="1.5"/><text x="185" y="82" text-anchor="middle" class="d-ink">[1] bravo</text>
+          <rect x="250" y="60" width="110" height="34" class="d-sheet d-line" stroke-width="1.5"/><text x="305" y="82" text-anchor="middle" class="d-ink">[2] charlie</text>
+          <text x="380" y="82" class="d-mute">becomes</text>
+          <rect x="450" y="60" width="120" height="34" class="d-hi-soft"/><rect x="450" y="60" width="120" height="34" class="d-chg-s" stroke-width="2"/><text x="510" y="82" text-anchor="middle" class="d-ink">[0] bravo  ~</text>
+          <rect x="580" y="60" width="130" height="34" class="d-hi-soft"/><rect x="580" y="60" width="130" height="34" class="d-chg-s" stroke-width="2"/><text x="645" y="82" text-anchor="middle" class="d-ink">[1] charlie ~</text>
+        </g>
+        <text x="10" y="118" class="t-s d-del-f">Every item after the removed one shifts down and gets changed (or replaced). [2] is destroyed.</text>
+
+        <line x1="10" y1="136" x2="710" y2="136" class="d-rule" stroke-width="1.5" stroke-dasharray="3 4"/>
+        <text x="10" y="160" class="t-xs d-add-f t-b">for_each · ADDRESSED BY KEY</text>
+        <text x="10" y="184" class="t-mono t-s d-mute">toset(["alpha", "bravo", "charlie"])  →  remove "alpha"</text>
+        <g class="t-mono t-s">
+          <rect x="10" y="198" width="130" height="34" class="d-sheet d-del-s" stroke-width="2" stroke-dasharray="4 3"/><text x="75" y="220" text-anchor="middle" class="d-ink">["alpha"]  -</text>
+          <rect x="150" y="198" width="130" height="34" class="d-sheet d-add-s" stroke-width="2"/><text x="215" y="220" text-anchor="middle" class="d-ink">["bravo"]  ✓</text>
+          <rect x="290" y="198" width="140" height="34" class="d-sheet d-add-s" stroke-width="2"/><text x="360" y="220" text-anchor="middle" class="d-ink">["charlie"]  ✓</text>
+        </g>
+        <text x="450" y="220" class="t-s d-add-f">Only alpha is destroyed. Nothing else moves.</text>
+      </svg>
+      <figcaption>Removing the first element is where <code>count</code> hurts most.</figcaption>
+    </figure>
+    <div class="tablewrap"><table>
+      <thead><tr><th></th><th><code>count</code></th><th><code>for_each</code></th></tr></thead>
+      <tbody>
+        <tr><td>Input</td><td>A number</td><td>A map or set of strings</td></tr>
+        <tr><td>Inside the block</td><td><code>count.index</code></td><td><code>each.key</code>, <code>each.value</code></td></tr>
+        <tr><td>Address</td><td><code>aws_instance.web[0]</code></td><td><code>aws_instance.web["alpha"]</code></td></tr>
+        <tr><td>Best for</td><td>N identical copies, or 0/1 on-off switches</td><td>Distinct, named things</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note tidbit"><b>Tidbit</b><p>Adding <code>count</code> to an existing resource is safe: Terraform automatically moves the old object to <code>[0]</code>. Switching from <code>count</code> to <code>for_each</code> is not automatic; write <code>moved</code> blocks for each element.</p></div>
+    <p class="takeaway">If the things have names, use <code>for_each</code>. If they're interchangeable, <code>count</code> is fine.</p>
+  </div>
+</section>
+
+<!-- ======================= PART C ======================= -->
+<div class="partmark"><b>Part C</b><span>Working with others</span></div>
+
+<section class="sheet" id="s14">
+  <div class="sheet-head"><div class="sheet-no">14</div><div class="sheet-title"><small>Our classroom reality <span class="labtag l2">Lab 2</span></small><h2>Shared accounts &amp; naming</h2></div></div>
+  <div class="sheet-body">
+    <p>In a shared account, a name collision is the most common way to break your own lab, and someone else's. AWS enforces uniqueness at very different scopes:</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 270" role="img" aria-label="Name uniqueness scopes from narrowest to widest: tags not enforced, per VPC, per account and region, per account globally, every AWS account worldwide">
+        <g>
+          <rect x="10" y="10" width="140" height="44" class="d-acc-soft"/><text x="80" y="37" text-anchor="middle" class="t-s t-b d-ink">Not enforced</text>
+          <text x="166" y="30" class="t-b d-ink">Name tags</text><text x="166" y="47" class="t-s d-mute">Duplicates allowed. That's the danger: you can't tell them apart.</text>
+        </g>
+        <g>
+          <rect x="10" y="62" width="250" height="44" class="d-acc-soft"/><text x="135" y="89" text-anchor="middle" class="t-s t-b d-ink">One VPC</text>
+          <text x="276" y="82" class="t-b d-ink">Security group names</text><text x="276" y="99" class="t-s d-mute">Shared default VPC → collisions</text>
+        </g>
+        <g>
+          <rect x="10" y="114" width="380" height="44" class="d-hi-soft"/><text x="200" y="141" text-anchor="middle" class="t-s t-b d-ink">Account + Region</text>
+          <text x="406" y="134" class="t-b d-ink">ALB, target group, ASG, Lambda,</text><text x="406" y="151" class="t-s d-mute">DynamoDB table, log group, key pair</text>
+        </g>
+        <g>
+          <rect x="10" y="166" width="520" height="44" class="d-hi-soft"/><rect x="10" y="166" width="520" height="44" class="d-hi-s" stroke-width="1.5"/><text x="270" y="193" text-anchor="middle" class="t-s t-b d-ink">Whole account, every Region</text>
+          <text x="546" y="186" class="t-b d-ink">IAM roles, users,</text><text x="546" y="203" class="t-s d-mute">CloudFront functions</text>
+        </g>
+        <g>
+          <rect x="10" y="218" width="700" height="44" class="d-del-f"/><text x="360" y="245" text-anchor="middle" class="t-b" fill="var(--sheet)">S3 bucket names: every AWS account on Earth</text>
+        </g>
+      </svg>
+      <figcaption>The wider the bar, the more strangers can take the name you want.</figcaption>
+    </figure>
+    <h3>The pattern that works</h3>
+<pre><span class="k">locals</span> {
+  name_prefix = <span class="s">"${var.user_id}-lab2"</span>          <span class="c"># everyone's names start with their ID</span>
+}
+
+<span class="k">provider</span> <span class="s">"aws"</span> {
+  region = <span class="s">"us-west-2"</span>
+  <span class="k">default_tags</span> {                           <span class="c"># every resource gets these, automatically</span>
+    tags = { Owner = var.user_id, ManagedBy = <span class="s">"terraform"</span> }
+  }
+}
+
+<span class="k">resource</span> <span class="s">"random_pet"</span> <span class="s">"suffix"</span> {}            <span class="c"># for globally unique names</span>
+
+<span class="k">resource</span> <span class="s">"aws_s3_bucket"</span> <span class="s">"logs"</span> {
+  bucket = <span class="s">"${local.name_prefix}-logs-${random_pet.suffix.id}"</span>
+}</pre>
+    <div class="note shared"><b>Shared-account rules</b><p>Prefix every name with your ID. Run Terraform only from your own directory. Never copy another person's state. Read every plan. Destroy when you're done, then prove it with a query on your <code>Owner</code> tag.</p></div>
+    <p class="takeaway">Prefix for people, random suffix for the planet, <code>Owner</code> tag for cleanup.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s15">
+  <div class="sheet-head"><div class="sheet-no">15</div><div class="sheet-title"><small>Beyond one laptop <span class="labtag l3">Lab 3</span></small><h2>Remote state &amp; locking</h2></div></div>
+  <div class="sheet-body">
+    <p>In the labs, state lives in a local file, which is fine for one person. A team needs state in one shared place, and a <strong>lock</strong> so two people can't apply at the same time.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 210" role="img" aria-label="Two engineers share state in an S3 backend; the first takes a lock file, the second waits">
+        <defs>
+          <marker id="m-l1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-add-f"/></marker>
+          <marker id="m-l2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-del-f"/></marker>
+        </defs>
+        <rect x="10" y="20" width="170" height="62" class="d-sheet d-line" stroke-width="1.5"/><text x="26" y="46" class="t-b d-ink">Ana</text><text x="26" y="66" class="t-mono t-s d-mute">terraform apply</text>
+        <rect x="10" y="128" width="170" height="62" class="d-sheet d-line" stroke-width="1.5"/><text x="26" y="154" class="t-b d-ink">Ben</text><text x="26" y="174" class="t-mono t-s d-mute">terraform apply</text>
+        <rect x="380" y="40" width="330" height="130" class="d-acc-soft"/><rect x="380" y="40" width="330" height="130" class="d-acc-s" stroke-width="2"/>
+        <text x="396" y="64" class="t-xs d-acc-f t-b">S3 BACKEND</text>
+        <text x="396" y="94" class="t-mono t-s d-ink">team/app/terraform.tfstate</text>
+        <rect x="396" y="110" width="220" height="32" class="d-sheet d-hi-s" stroke-width="1.5"/>
+        <text x="408" y="131" class="t-mono t-s d-ink">terraform.tfstate.tflock 🔒</text>
+        <path d="M180,51 C280,51 280,126 392,126" class="d-add-s" stroke-width="2" marker-end="url(#m-l1)"/>
+        <text x="236" y="44" class="t-s d-add-f">takes the lock</text>
+        <path d="M180,159 L376,159" class="d-del-s" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#m-l2)"/>
+        <text x="200" y="182" class="t-s d-del-f">"Error acquiring the state lock" · waits</text>
+      </svg>
+      <figcaption>Since Terraform 1.10 the S3 backend can lock with a lock file in the bucket itself (<code>use_lockfile</code>). Older setups used a DynamoDB table, which is now deprecated.</figcaption>
+    </figure>
+<pre><span class="k">terraform</span> {
+  <span class="k">backend</span> <span class="s">"s3"</span> {
+    bucket       = <span class="s">"acme-terraform-state"</span>
+    key          = <span class="s">"team/app/terraform.tfstate"</span>
+    region       = <span class="s">"us-west-2"</span>
+    use_lockfile = true
+    encrypt      = true
+  }
+}</pre>
+    <h3>Bootstrapping the bucket <span class="labtag l3">Lab 3</span></h3>
+    <p>The state bucket can't keep its own state before it exists. The usual answer is a tiny <strong>bootstrap</strong> configuration, with local state, that creates the bucket once. Every other configuration then stores its state there under its own key.</p>
+    <p>Backend blocks can't use variables, because they're read before variables exist. Leave the block empty and pass the details at init time. That's <strong>partial configuration</strong>, and it's how one codebase serves many state files.</p>
+<pre><span class="k">backend</span> <span class="s">"s3"</span> {}                       <span class="c"># in main.tf</span>
+
+<span class="c"># backend.hcl</span>
+bucket       = <span class="s">"user07-tfstate-a1b2c3"</span>
+key          = <span class="s">"user07/park/terraform.tfstate"</span>
+region       = <span class="s">"us-west-2"</span>
+use_lockfile = true
+
+<span class="c">$ terraform init -backend-config=backend.hcl</span></pre>
+    <div class="note analogy"><b>Analogy</b><p>A library book. Anyone can read the catalogue, but only one person can check out the book at a time. Everyone else waits until it's returned.</p></div>
+    <div class="note trap"><b>Trap</b><p>Turn on versioning for the state bucket. If state is ever corrupted or overwritten, an older version is your undo button.</p></div>
+    <p class="takeaway">One state, one place, one writer at a time.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s16">
+  <div class="sheet-head"><div class="sheet-no">16</div><div class="sheet-title"><small>Reuse <span class="labtag l3">Lab 3</span></small><h2>Modules</h2></div></div>
+  <div class="sheet-body">
+    <p>A <strong>module</strong> is a folder of Terraform with inputs (variables) and outputs. Every configuration you've written is already a module: the <em>root</em> module. Calling another module lets you stamp out the same pattern many times.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 210" role="img" aria-label="One web-tier module called twice, for dev and prod, with different inputs">
+        <defs><marker id="m-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-ink"/></marker></defs>
+        <rect x="250" y="30" width="220" height="150" class="d-acc-soft"/><rect x="250" y="30" width="220" height="150" class="d-acc-s" stroke-width="2"/>
+        <text x="266" y="56" class="t-xs d-acc-f t-b">modules/web-tier</text>
+        <g class="t-mono t-s d-ink"><text x="266" y="84">variables.tf  (inputs)</text><text x="266" y="106">main.tf       (ALB, ASG, SG)</text><text x="266" y="128">outputs.tf    (url)</text></g>
+        <text x="266" y="160" class="t-s d-mute">written once, tested once</text>
+        <rect x="10" y="20" width="170" height="70" class="d-sheet d-line" stroke-width="1.5"/>
+        <text x="26" y="44" class="t-mono t-s d-ink">module "dev" {</text><text x="26" y="62" class="t-mono t-s d-ink">  size = "t3.micro"</text><text x="26" y="80" class="t-mono t-s d-ink">}</text>
+        <rect x="10" y="120" width="170" height="70" class="d-sheet d-line" stroke-width="1.5"/>
+        <text x="26" y="144" class="t-mono t-s d-ink">module "prod" {</text><text x="26" y="162" class="t-mono t-s d-ink">  size = "m7i.large"</text><text x="26" y="180" class="t-mono t-s d-ink">}</text>
+        <path d="M180,55 L246,80" class="d-line" stroke-width="1.4" marker-end="url(#m-m)"/>
+        <path d="M180,155 L246,130" class="d-line" stroke-width="1.4" marker-end="url(#m-m)"/>
+        <text x="540" y="70" class="t-mono t-s d-ink">module.dev.url</text>
+        <text x="540" y="150" class="t-mono t-s d-ink">module.prod.url</text>
+        <path d="M470,80 L532,66" class="d-line" stroke-width="1.4" marker-end="url(#m-m)"/>
+        <path d="M470,130 L532,146" class="d-line" stroke-width="1.4" marker-end="url(#m-m)"/>
+      </svg>
+      <figcaption>Same module, two calls, two independent copies with their own addresses.</figcaption>
+    </figure>
+<pre><span class="k">module</span> <span class="s">"vpc"</span> {
+  source  = <span class="s">"terraform-aws-modules/vpc/aws"</span>   <span class="c"># from the public registry</span>
+  version = <span class="s">"~&gt; 5.0"</span>
+
+  name = <span class="s">"${var.user_id}-vpc"</span>
+  cidr = <span class="s">"10.0.0.0/16"</span>
+}</pre>
+    <h3>One module, many instances <span class="labtag l3">Lab 3</span></h3>
+<pre><span class="k">module</span> <span class="s">"rides"</span> {
+  source    = <span class="s">"./modules/ride"</span>
+  for_each  = var.rides                 <span class="c"># a map(object({...}))</span>
+  ride_name = each.key
+  thrill    = each.value.thrill
+}
+<span class="c"># address: module.rides["coaster"].aws_sqs_queue.line</span></pre>
+    <p>A good module has no provider block and doesn't know who's calling it. Everything comes in through variables and goes out through outputs. That's what makes it reusable, and testable with mocks (sheet 23).</p>
+    <div class="note analogy"><b>Analogy</b><p>A LEGO set's instruction booklet. You don't redesign a wheel for every car; you follow the wheel page and choose the colour.</p></div>
+    <div class="note trap"><b>Trap</b><p>Wrapping a single resource in a module just to rename its arguments adds a layer and buys nothing. Make a module when it captures a decision: a whole pattern with sensible defaults.</p></div>
+    <p class="takeaway">Modules are functions for infrastructure: inputs in, outputs out, internals hidden.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s17">
+  <div class="sheet-head"><div class="sheet-no">17</div><div class="sheet-title"><small>Don't leak</small><h2>Secrets &amp; safety</h2></div></div>
+  <div class="sheet-body">
+    <ul>
+      <li><strong>Credentials never go in <code>.tf</code> or <code>.tfvars</code>.</strong> Use <code>aws configure</code>, SSO, environment variables, or an IAM role.</li>
+      <li><strong><code>sensitive = true</code></strong> on a variable or output hides it from CLI output, but the value is still stored in plain text in state.</li>
+      <li><strong>State is a secret.</strong> It can contain passwords and keys. Store it encrypted with restricted access, and never commit it.</li>
+      <li>Newer Terraform (1.10+) adds <strong>ephemeral</strong> values and <strong>write-only</strong> arguments that never reach state, for providers that support them.</li>
+    </ul>
+    <h3>A starter <code>.gitignore</code></h3>
+<pre><span class="c"># Terraform</span>
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars          <span class="c"># if they hold anything private</span>
+!example.tfvars   <span class="c"># …but keep a template</span>
+
+<span class="c"># DO commit</span>
+<span class="c"># .terraform.lock.hcl</span></pre>
+    <p class="takeaway">Hidden in the terminal is not the same as hidden. Protect the state file like a password.</p>
+  </div>
+</section>
+
+<!-- ======================= PART D ======================= -->
+<div class="partmark"><b>Part D</b><span>Advanced moves · Labs 3–5</span></div>
+
+<section class="sheet" id="s18">
+  <div class="sheet-head"><div class="sheet-no">18</div><div class="sheet-title"><small>Shapes of data <span class="labtag l3">Lab 3</span></small><h2>Complex types &amp; <code>optional()</code></h2></div></div>
+  <div class="sheet-body">
+    <p>Once a configuration is driven by data ("these are our rides", "these are our fleets"), the variable's <strong>type</strong> becomes a contract. A precise type catches typos at plan time, documents the shape for the next person, and lets callers skip fields that have sensible defaults.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 230" role="img" aria-label="A map of objects: each key is a ride, each value an object; missing optional fields are filled with defaults">
+        <defs><marker id="m-t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-ink"/></marker></defs>
+        <text x="10" y="22" class="t-xs d-mute t-b">YOU WRITE (park.tfvars)</text>
+        <rect x="10" y="32" width="290" height="186" fill="var(--code-bg)"/>
+        <g class="t-mono" style="font-size:12.5px">
+          <text x="24" y="58" fill="#DCE7F2">rides = {</text>
+          <text x="24" y="82" fill="#DCE7F2">  coaster = {</text>
+          <text x="24" y="102" fill="#DCE7F2">    thrill = 5</text>
+          <text x="24" y="122" fill="#DCE7F2">    color  = <tspan fill="#F2C47B">"#ee4266"</tspan></text>
+          <text x="24" y="142" fill="#DCE7F2">  }</text>
+          <text x="24" y="166" fill="#DCE7F2">  ferris-wheel = { thrill = 2 }</text>
+          <text x="24" y="196" fill="#DCE7F2">}</text>
+        </g>
+        <path d="M300,125 L366,125" class="d-line" stroke-width="1.6" marker-end="url(#m-t)"/>
+        <text x="333" y="116" text-anchor="middle" class="t-s d-mute">type check</text>
+        <text x="380" y="22" class="t-xs d-acc-f t-b">TERRAFORM SEES</text>
+        <rect x="380" y="32" width="330" height="80" class="d-sheet d-acc-s" stroke-width="1.5"/>
+        <text x="394" y="54" class="t-mono t-b d-ink">coaster</text>
+        <text x="394" y="76" class="t-mono t-s d-ink">thrill = 5   color = "#ee4266"</text>
+        <text x="394" y="96" class="t-mono t-s d-ink">max_tries = 3 <tspan class="d-add-f">← default</tspan></text>
+        <rect x="380" y="128" width="330" height="90" class="d-sheet d-acc-s" stroke-width="1.5"/>
+        <text x="394" y="150" class="t-mono t-b d-ink">ferris-wheel</text>
+        <text x="394" y="172" class="t-mono t-s d-ink">thrill = 2</text>
+        <text x="394" y="192" class="t-mono t-s d-ink">color = "#e2702b" <tspan class="d-add-f">← default</tspan></text>
+        <text x="394" y="210" class="t-mono t-s d-ink">max_tries = 3 <tspan class="d-add-f">← default</tspan></text>
+      </svg>
+      <figcaption>Each key becomes a module instance; each object is that instance's settings.</figcaption>
+    </figure>
+<pre><span class="k">variable</span> <span class="s">"rides"</span> {
+  type = map(object({
+    thrill    = number
+    color     = optional(string, <span class="s">"#e2702b"</span>)   <span class="c"># optional, with a default</span>
+    max_tries = optional(number, 3)
+  }))
+}</pre>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Type</th><th>Shape</th><th>Use for</th></tr></thead>
+      <tbody>
+        <tr><td><code>list(string)</code></td><td>Ordered, duplicates allowed</td><td>Subnet IDs, CIDRs</td></tr>
+        <tr><td><code>set(string)</code></td><td>Unordered, unique</td><td><code>for_each</code> over plain names</td></tr>
+        <tr><td><code>map(number)</code></td><td>Keys to one value type</td><td>A traffic dial: <code>{ blue = 90, green = 10 }</code></td></tr>
+        <tr><td><code>object({…})</code></td><td>Named fields, each with its own type</td><td>The settings for one thing</td></tr>
+        <tr><td><code>map(object({…}))</code></td><td>Many named things with settings</td><td>Rides, fleets, environments</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note trap"><b>Trap</b><p><code>for_each</code> accepts a map or a set, not a list. Lists are ordered, and reordering would reshuffle your resources. Wrap a list with <code>toset()</code> if the items are unique strings.</p></div>
+    <p class="takeaway">Type the data precisely, default what you can, and let the plan reject the rest.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s19">
+  <div class="sheet-head"><div class="sheet-no">19</div><div class="sheet-title"><small>Repeating nested blocks <span class="labtag l5">Lab 5</span></small><h2>Dynamic blocks</h2></div></div>
+  <div class="sheet-body">
+    <p><code>count</code> and <code>for_each</code> repeat whole <em>resources</em>. Sometimes you need to repeat a <em>nested block inside</em> one resource: one <code>target_group</code> per fleet, one <code>ingress</code> per port. A <code>dynamic</code> block generates them from a collection.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 200" role="img" aria-label="A dynamic block iterates over the fleets and generates one target_group block per fleet">
+        <defs><marker id="m-dy" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-ink"/></marker></defs>
+        <rect x="10" y="20" width="300" height="160" fill="var(--code-bg)"/>
+        <g class="t-mono" style="font-size:12.5px">
+          <text x="24" y="46" fill="#8CC4FF">dynamic <tspan fill="#F2C47B">"target_group"</tspan> <tspan fill="#DCE7F2">{</tspan></text>
+          <text x="24" y="70" fill="#DCE7F2">  for_each = module.fleet</text>
+          <text x="24" y="94" fill="#8CC4FF">  content <tspan fill="#DCE7F2">{</tspan></text>
+          <text x="24" y="116" fill="#DCE7F2">    arn    = target_group.value…</text>
+          <text x="24" y="138" fill="#DCE7F2">    weight = var.traffic[target_group.key]</text>
+          <text x="24" y="160" fill="#DCE7F2">  } }</text>
+        </g>
+        <path d="M310,100 L376,100" class="d-line" stroke-width="1.6" marker-end="url(#m-dy)"/>
+        <text x="343" y="90" text-anchor="middle" class="t-s d-mute">expands to</text>
+        <rect x="380" y="20" width="330" height="70" style="fill:var(--lab1-soft)"/>
+        <rect x="380" y="20" width="330" height="70" fill="none" style="stroke:var(--lab1)" stroke-width="2"/>
+        <text x="396" y="46" class="t-mono d-ink">target_group {  <tspan class="t-b">key = "blue"</tspan></text>
+        <text x="396" y="70" class="t-mono t-s d-ink">  arn = …/blue   weight = 90  }</text>
+        <rect x="380" y="110" width="330" height="70" style="fill:var(--lab5-soft)"/>
+        <rect x="380" y="110" width="330" height="70" fill="none" style="stroke:var(--lab5)" stroke-width="2"/>
+        <text x="396" y="136" class="t-mono d-ink">target_group {  <tspan class="t-b">key = "green"</tspan></text>
+        <text x="396" y="160" class="t-mono t-s d-ink">  arn = …/green  weight = 10  }</text>
+      </svg>
+      <figcaption>The iterator is named after the block: <code>target_group.key</code>, <code>target_group.value</code>.</figcaption>
+    </figure>
+    <div class="note tidbit"><b>Tidbit</b><p>Rename the iterator with <code>iterator = tg</code> when the block name is long or nested dynamics would clash.</p></div>
+    <div class="note trap"><b>Trap</b><p>Dynamic blocks hide structure. If the nested blocks are fixed (always exactly two ports), write them out. Reach for <code>dynamic</code> only when the <em>count</em> really comes from data.</p></div>
+    <p class="takeaway">Repeat resources with <code>for_each</code>; repeat nested blocks with <code>dynamic</code>. Use both sparingly.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s20">
+  <div class="sheet-head"><div class="sheet-no">20</div><div class="sheet-title"><small>Adopting ClickOps <span class="labtag l4">Lab 4</span></small><h2>Import blocks</h2></div></div>
+  <div class="sheet-body">
+    <p>Real accounts are full of things someone built by hand. An <code>import</code> block adopts an existing object into state <strong>without recreating it</strong>, and appears in the plan for review like any other change.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 150" role="img" aria-label="Import flow: real object, import block, generated draft, tidy, apply into state">
+        <defs><marker id="m-i" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-ink"/></marker></defs>
+        <g>
+          <rect x="10" y="30" width="120" height="80" style="fill:var(--lab4-soft)"/><rect x="10" y="30" width="120" height="80" fill="none" style="stroke:var(--lab4)" stroke-width="2"/>
+          <text x="70" y="62" text-anchor="middle" class="t-b d-ink">Real object</text><text x="70" y="84" text-anchor="middle" class="t-s d-mute">made by hand</text>
+          <rect x="155" y="30" width="125" height="80" class="d-sheet d-line" stroke-width="1.5"/>
+          <text x="217" y="62" text-anchor="middle" class="t-mono t-s d-ink">import { to, id }</text><text x="217" y="84" text-anchor="middle" class="t-s d-mute">① declare</text>
+          <rect x="305" y="30" width="135" height="80" class="d-sheet d-line" stroke-width="1.5"/>
+          <text x="372" y="62" text-anchor="middle" class="t-mono t-s d-ink">generated.tf</text><text x="372" y="84" text-anchor="middle" class="t-s d-mute">② draft (noisy)</text>
+          <rect x="465" y="30" width="110" height="80" class="d-sheet d-line" stroke-width="1.5"/>
+          <text x="520" y="62" text-anchor="middle" class="t-b d-ink">Tidy</text><text x="520" y="84" text-anchor="middle" class="t-s d-mute">③ make it yours</text>
+          <rect x="600" y="30" width="110" height="80" class="d-acc-soft"/><rect x="600" y="30" width="110" height="80" class="d-add-s" stroke-width="2"/>
+          <text x="655" y="62" text-anchor="middle" class="t-b d-ink">State ✓</text><text x="655" y="84" text-anchor="middle" class="t-s d-mute">④ apply</text>
+        </g>
+        <g class="d-line" stroke-width="1.5"><path d="M130,70 L151,70" marker-end="url(#m-i)"/><path d="M280,70 L301,70" marker-end="url(#m-i)"/><path d="M440,70 L461,70" marker-end="url(#m-i)"/><path d="M575,70 L596,70" marker-end="url(#m-i)"/></g>
+        <text x="10" y="138" class="t-mono t-s d-mute">terraform plan -generate-config-out=generated.tf</text>
+      </svg>
+      <figcaption>Since Terraform 1.5. Each resource's docs page lists its import ID format at the bottom.</figcaption>
+    </figure>
+<pre><span class="k">import</span> {
+  to = aws_sqs_queue.relic
+  id = <span class="s">"https://sqs.us-west-2.amazonaws.com/123456789012/user07-museum-relic"</span>
+}</pre>
+    <ul>
+      <li>The <code>id</code> format differs per type: an SQS queue uses its <strong>URL</strong>, a parameter its <strong>name</strong>, an instance its <code>i-…</code> ID.</li>
+      <li>Generated config is a <strong>first draft</strong>: every attribute at its current value. Keep what matters; delete defaults.</li>
+      <li>Sensitive values come out as <code>null # sensitive</code>. Fill them in yourself.</li>
+      <li>Delete the <code>import</code> block after apply. It has done its job.</li>
+    </ul>
+    <div class="note shared"><b>Shared-account rule</b><p>Only import what's yours. Importing a neighbour's resource makes <em>your</em> <code>destroy</code> delete it.</p></div>
+    <p class="takeaway">Import adopts; it never rebuilds. Review it in the plan like any other change.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s21">
+  <div class="sheet-head"><div class="sheet-no">21</div><div class="sheet-title"><small>Safe refactoring <span class="labtag l3">Lab 3</span> <span class="labtag l4">Lab 4</span></small><h2><code>moved</code> &amp; <code>removed</code></h2></div></div>
+  <div class="sheet-body">
+    <p>Renaming a resource, wrapping it in a module, or switching to <code>for_each</code> all change its <strong>address</strong>. To Terraform, a new address is a new object, so it plans to destroy the old one and create a new one. Two blocks tell it what you actually meant.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 210" role="img" aria-label="moved keeps the object at a new address; removed drops it from state but leaves it running">
+        <defs><marker id="m-mv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-add-f"/></marker></defs>
+        <text x="10" y="24" class="t-xs d-add-f t-b">moved { }</text>
+        <rect x="10" y="34" width="200" height="40" class="d-sheet d-line" stroke-width="1.5"/><text x="110" y="59" text-anchor="middle" class="t-mono t-s d-ink">aws_sqs_queue.this</text>
+        <path d="M210,54 L346,54" class="d-add-s" stroke-width="2.5" marker-end="url(#m-mv)"/><text x="278" y="46" text-anchor="middle" class="t-mono t-s d-add-f">has moved to</text>
+        <rect x="350" y="34" width="360" height="40" class="d-acc-soft"/><rect x="350" y="34" width="360" height="40" class="d-add-s" stroke-width="2"/>
+        <text x="530" y="59" text-anchor="middle" class="t-mono t-s d-ink">module.relic_exhibit.aws_sqs_queue.this</text>
+        <text x="10" y="94" class="t-s d-mute">Same object ID, nothing rebuilt. Works for renames, modules, and count → for_each keys.</text>
+
+        <line x1="10" y1="114" x2="710" y2="114" class="d-rule" stroke-width="1.5" stroke-dasharray="3 4"/>
+        <text x="10" y="140" class="t-xs t-b" style="fill:var(--lab4)">removed { lifecycle { destroy = false } }</text>
+        <rect x="10" y="150" width="200" height="40" class="d-sheet d-line" stroke-width="1.5"/><text x="110" y="175" text-anchor="middle" class="t-mono t-s d-ink">aws_ssm_parameter.relic</text>
+        <text x="236" y="168" class="t-s d-ink">State: <tspan class="t-b">forgotten</tspan></text>
+        <text x="236" y="186" class="t-s d-ink">AWS: <tspan class="t-b d-add-f">still there</tspan></text>
+        <text x="420" y="168" class="t-s d-mute">Hand a resource to another team or</text>
+        <text x="420" y="186" class="t-s d-mute">configuration without an outage.</text>
+      </svg>
+      <figcaption>Both appear in the plan, so the refactor gets reviewed like any other change.</figcaption>
+    </figure>
+<pre><span class="k">moved</span> {
+  from = module.coaster
+  to   = module.rides[<span class="s">"coaster"</span>]
+}
+
+<span class="k">removed</span> {
+  from = aws_ssm_parameter.relic
+  <span class="k">lifecycle</span> { destroy = false }
+}</pre>
+    <div class="note tidbit"><b>Tidbit</b><p>These replace the old <code>terraform state mv</code> and <code>state rm</code> commands, which changed state silently with no review. Keep <code>moved</code> blocks around until every environment has applied them.</p></div>
+    <p class="takeaway">Change addresses in code, never by hand. The plan should say "moved", not "destroy".</p>
+  </div>
+</section>
+
+<section class="sheet" id="s22">
+  <div class="sheet-head"><div class="sheet-no">22</div><div class="sheet-title"><small>Locks and smoke alarms <span class="labtag l4">Lab 4</span> <span class="labtag l5">Lab 5</span></small><h2>Guardrails: conditions &amp; checks</h2></div></div>
+  <div class="sheet-body">
+    <figure class="dwg">
+      <svg viewBox="0 0 720 170" role="img" aria-label="Timeline: validation and preconditions block before changes, postconditions block after, check blocks warn on every run">
+        <line x1="10" y1="80" x2="700" y2="80" class="d-line" stroke-width="2.5"/>
+        <polygon points="700,73 714,80 700,87" class="d-ink"/>
+        <g>
+          <circle cx="90" cy="80" r="13" class="d-del-f"/><text x="90" y="40" text-anchor="middle" class="t-b d-ink">validation</text><text x="90" y="56" text-anchor="middle" class="t-s d-mute">one or more variables</text>
+          <text x="90" y="112" text-anchor="middle" class="t-xs t-b d-del-f">BLOCKS</text>
+          <circle cx="250" cy="80" r="13" class="d-del-f"/><text x="250" y="40" text-anchor="middle" class="t-b d-ink">precondition</text><text x="250" y="56" text-anchor="middle" class="t-s d-mute">inputs + data sources</text>
+          <text x="250" y="112" text-anchor="middle" class="t-xs t-b d-del-f">BLOCKS</text>
+          <rect x="320" y="66" width="110" height="28" rx="14" class="d-ink"/><text x="375" y="85" text-anchor="middle" class="t-s t-b" fill="var(--sheet)">create / read</text>
+          <circle cx="500" cy="80" r="13" class="d-del-f"/><text x="500" y="40" text-anchor="middle" class="t-b d-ink">postcondition</text><text x="500" y="56" text-anchor="middle" class="t-s d-mute">checks self</text>
+          <text x="500" y="112" text-anchor="middle" class="t-xs t-b d-del-f">BLOCKS</text>
+          <circle cx="640" cy="80" r="13" class="d-chg-f"/><text x="640" y="40" text-anchor="middle" class="t-b d-ink">check { }</text><text x="640" y="56" text-anchor="middle" class="t-s d-mute">every plan &amp; apply</text>
+          <text x="640" y="112" text-anchor="middle" class="t-xs t-b d-chg-f">WARNS</text>
+        </g>
+        <text x="10" y="152" class="t-s d-mute">Since 1.9, validation can reference other variables, e.g. traffic weights that must match the fleets.</text>
+      </svg>
+      <figcaption>Fail early with the cheapest check that can see the problem.</figcaption>
+    </figure>
+<pre><span class="k">lifecycle</span> {
+  <span class="k">precondition</span> {
+    condition     = !var.fragile || var.retention_hours &gt;= 72
+    error_message = <span class="s">"Fragile exhibits must keep messages for at least 72 hours."</span>
+  }
+  <span class="k">postcondition</span> {
+    condition     = self.sqs_managed_sse_enabled
+    error_message = <span class="s">"Exhibit queues must be encrypted at rest."</span>
+  }
+}
+
+<span class="k">check</span> <span class="s">"site_answers"</span> {
+  <span class="k">data</span> <span class="s">"http"</span> <span class="s">"site"</span> { url = <span class="s">"http://${aws_lb.this.dns_name}/"</span> }
+  <span class="k">assert</span> {
+    condition     = data.http.site.status_code == 200
+    error_message = <span class="s">"The site is not answering."</span>
+  }
+}</pre>
+    <div class="note analogy"><b>Analogy</b><p>Preconditions and postconditions are locked doors: nobody gets through when the rule fails. A check block is a smoke alarm: it sounds every time you walk past, but it doesn't stop you.</p></div>
+    <p class="takeaway">Block what must never happen. Warn about what might be drifting.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s23">
+  <div class="sheet-head"><div class="sheet-no">23</div><div class="sheet-title"><small>Confidence without a cloud bill <span class="labtag l4">Lab 4</span> <span class="labtag l5">Lab 5</span></small><h2><code>terraform test</code> &amp; mocks</h2></div></div>
+  <div class="sheet-body">
+    <p><code>terraform test</code> runs <code>.tftest.hcl</code> files: each <code>run</code> block plans (or applies) the configuration with chosen inputs and checks <code>assert</code> conditions. With a <code>mock_provider</code>, no API is called, so tests are fast, free, and safe in a shared account.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 170" role="img" aria-label="terraform test drives the module; the mock provider answers instead of AWS">
+        <defs><marker id="m-te" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="d-ink"/></marker></defs>
+        <rect x="10" y="20" width="200" height="130" class="d-sheet d-line" stroke-width="1.5"/>
+        <text x="24" y="44" class="t-xs d-mute t-b">*.tftest.hcl</text>
+        <g class="t-mono t-s"><text x="24" y="70" class="d-add-f">✓ names_are_prefixed</text><text x="24" y="92" class="d-add-f">✓ weights_total_100</text><text x="24" y="114" class="d-add-f">✓ bad_dial_rejected</text></g>
+        <text x="24" y="138" class="t-s d-mute">seconds, offline</text>
+        <rect x="260" y="45" width="180" height="80" class="d-acc-soft"/><rect x="260" y="45" width="180" height="80" class="d-acc-s" stroke-width="2"/>
+        <text x="350" y="80" text-anchor="middle" class="t-b d-ink">your module</text><text x="350" y="100" text-anchor="middle" class="t-s d-mute">the real logic</text>
+        <rect x="490" y="20" width="220" height="56" style="fill:var(--lab5-soft)"/><rect x="490" y="20" width="220" height="56" fill="none" style="stroke:var(--lab5)" stroke-width="2"/>
+        <text x="504" y="44" class="t-mono t-b d-ink">mock_provider "aws"</text><text x="504" y="64" class="t-s d-mute">fake IDs, instant answers</text>
+        <rect x="490" y="94" width="220" height="56" class="d-sheet d-del-s" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <text x="504" y="118" class="t-b d-del-f">real AWS</text><text x="504" y="138" class="t-s d-mute">never called</text>
+        <path d="M210,85 L256,85" class="d-line" stroke-width="1.5" marker-end="url(#m-te)"/>
+        <path d="M440,75 L486,52" class="d-line" stroke-width="1.5" marker-end="url(#m-te)"/>
+      </svg>
+      <figcaption>Mocks test <em>your</em> logic (names, math, rules), not whether AWS accepts the result.</figcaption>
+    </figure>
+<pre><span class="k">mock_provider</span> <span class="s">"aws"</span> {
+  <span class="k">mock_resource</span> <span class="s">"aws_lb"</span> {                     <span class="c"># realistic values for format checks</span>
+    defaults = { arn = <span class="s">"arn:aws:elasticloadbalancing:…"</span> }
+  }
+}
+
+<span class="k">run</span> <span class="s">"bad_dial_rejected"</span> {
+  command   = plan
+  variables { traffic = { blue = 50, green = 30 } }
+  expect_failures = [var.traffic]                <span class="c"># this SHOULD fail</span>
+}</pre>
+    <div class="tablewrap"><table>
+      <thead><tr><th>In a test file</th><th>Does</th></tr></thead>
+      <tbody>
+        <tr><td><code>run "name" { … }</code></td><td>One scenario; <code>command = plan</code> or the default <code>apply</code></td></tr>
+        <tr><td><code>assert { condition, error_message }</code></td><td>Must be true after the run</td></tr>
+        <tr><td><code>expect_failures = [...]</code></td><td>Passes only if those variables/resources/checks fail</td></tr>
+        <tr><td><code>override_data</code> / <code>override_resource</code></td><td>Pin one object's values ("pretend the Region is eu-west-1")</td></tr>
+        <tr><td><code>mock_resource "type"</code></td><td>Default values for every resource of a type</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note trap"><b>Trap</b><p>Mocks invent random strings, but providers still validate formats. Errors like <em>"must begin with 'lt-'"</em> or <em>"invalid ARN"</em> mean you need <code>mock_resource</code> defaults. And a <code>check</code> block's data source is deferred during a plan of new resources, so use a mocked <code>apply</code> for those runs. It still creates nothing.</p></div>
+    <p class="takeaway">Test the rules you'd be embarrassed to break. Mocks make it free.</p>
+  </div>
+</section>
+
+<section class="sheet" id="s24">
+  <div class="sheet-head"><div class="sheet-no">24</div><div class="sheet-title"><small>Shipping without downtime <span class="labtag l5">Lab 5</span></small><h2>Blue/green &amp; the traffic dial</h2></div></div>
+  <div class="sheet-body">
+    <p>Replacing servers in place means a gap. <strong>Blue/green</strong> runs the old (blue) and new (green) versions side by side and moves traffic between them with load-balancer <strong>weights</strong>. Rollback is the same one-line change in reverse.</p>
+    <figure class="dwg">
+      <svg viewBox="0 0 720 150" role="img" aria-label="Traffic dial sequence: 100/0, 90/10, 50/50, 0/100, back to 100/0">
+        <g class="t-s t-b">
+          <text x="10" y="20" class="d-ink">before</text>
+          <rect x="10" y="30" width="124" height="30" style="fill:var(--lab1)"/>
+          <text x="72" y="50" text-anchor="middle" fill="var(--sheet)">100 / 0</text>
+          <text x="154" y="20" class="d-ink">canary</text>
+          <rect x="154" y="30" width="112" height="30" style="fill:var(--lab1)"/><rect x="266" y="30" width="12" height="30" style="fill:var(--lab5)"/>
+          <text x="210" y="50" text-anchor="middle" fill="var(--sheet)">90 / 10</text>
+          <text x="298" y="20" class="d-ink">half</text>
+          <rect x="298" y="30" width="62" height="30" style="fill:var(--lab1)"/><rect x="360" y="30" width="62" height="30" style="fill:var(--lab5)"/>
+          <text x="360" y="50" text-anchor="middle" fill="var(--sheet)">50 / 50</text>
+          <text x="442" y="20" class="d-ink">launch</text>
+          <rect x="442" y="30" width="124" height="30" style="fill:var(--lab5)"/>
+          <text x="504" y="50" text-anchor="middle" fill="var(--sheet)">0 / 100</text>
+          <text x="586" y="20" class="d-del-f">rollback</text>
+          <rect x="586" y="30" width="124" height="30" style="fill:var(--lab1)"/>
+          <text x="648" y="50" text-anchor="middle" fill="var(--sheet)">100 / 0</text>
+        </g>
+        <rect x="10" y="84" width="700" height="50" fill="var(--code-bg)"/>
+        <text x="26" y="106" class="t-mono" fill="#F2C47B">~ aws_lb_listener.http   <tspan fill="#DCE7F2">(the only change at every step)</tspan></text>
+        <text x="26" y="124" class="t-mono t-s" fill="#8FA8BF">traffic = { blue = 90, green = 10 }</text>
+      </svg>
+      <figcaption>Fleets are separate <code>for_each</code> module instances; traffic belongs to the listener alone.</figcaption>
+    </figure>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Strategy</th><th>How</th><th>Downtime</th><th>Rollback</th></tr></thead>
+      <tbody>
+        <tr><td>Replace in place</td><td><code>-/+</code> on the instance</td><td>Yes</td><td>Rebuild again</td></tr>
+        <tr><td><code>create_before_destroy</code></td><td>New first, then delete old</td><td>Brief or none</td><td>Rebuild again</td></tr>
+        <tr><td>Rolling refresh</td><td>ASG <code>instance_refresh</code></td><td>None (reduced capacity)</td><td>Another rolling refresh</td></tr>
+        <tr><td><strong>Blue/green</strong></td><td>Two fleets + weighted listener</td><td>None</td><td><strong>Seconds</strong>: move the weights back</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note trap"><b>Trap</b><p>If <code>traffic</code> leaks into a launch template or user data, a dial change replaces instances, and the whole point is lost. The plan for a dial change should show only the listener.</p></div>
+    <p class="takeaway">Deploy the new version where nobody sees it. Then move traffic, not servers.</p>
+  </div>
+</section>
+
+<!-- ======================= REFERENCE ======================= -->
+<div class="partmark"><b>Reference</b><span>Keep this open during labs</span></div>
+
+<section class="sheet" id="s25">
+  <div class="sheet-head"><div class="sheet-no">25</div><div class="sheet-title"><small>One screen</small><h2>Crib sheet</h2></div></div>
+  <div class="sheet-body">
+    <div class="tablewrap"><table>
+      <thead><tr><th>Command</th><th>When</th></tr></thead>
+      <tbody>
+        <tr><td><code>terraform init</code></td><td>New directory, new provider, new module, new backend</td></tr>
+        <tr><td><code>terraform fmt</code></td><td>Before every commit. Fixes indentation.</td></tr>
+        <tr><td><code>terraform validate</code></td><td>Syntax and reference check, no AWS calls</td></tr>
+        <tr><td><code>terraform plan -var-file=testing.tfvars</code></td><td>Preview. Read every line.</td></tr>
+        <tr><td><code>terraform apply -var-file=testing.tfvars</code></td><td>Make it so (asks first)</td></tr>
+        <tr><td><code>terraform destroy -var-file=testing.tfvars</code></td><td>Remove everything in this state</td></tr>
+        <tr><td><code>terraform output</code> / <code>-raw NAME</code></td><td>Read outputs (raw for scripts)</td></tr>
+        <tr><td><code>terraform state list</code> / <code>show ADDR</code></td><td>What am I managing?</td></tr>
+        <tr><td><code>terraform console</code></td><td>Try expressions safely</td></tr>
+        <tr><td><code>terraform plan -refresh-only</code></td><td>What drifted?</td></tr>
+        <tr><td><code>terraform init -backend-config=backend.hcl</code></td><td>Connect to a remote backend (partial config)</td></tr>
+        <tr><td><code>terraform init -migrate-state</code></td><td>Move existing state into a new backend</td></tr>
+        <tr><td><code>terraform plan -generate-config-out=generated.tf</code></td><td>Draft resource blocks for <code>import</code> targets</td></tr>
+        <tr><td><code>terraform test</code></td><td>Run <code>tests/*.tftest.hcl</code></td></tr>
+        <tr><td><code>terraform -chdir=DIR output -raw NAME</code></td><td>Read another configuration's output without <code>cd</code></td></tr>
+        <tr><td><code>terraform graph</code></td><td>Print the dependency graph (DOT)</td></tr>
+        <tr><td><code>terraform providers</code></td><td>Which providers, from where</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Standard file layout</h3>
+<pre>tf-lab/
+├── main.tf              <span class="c"># terraform{}, provider, resources, data</span>
+├── variables.tf         <span class="c"># variable blocks</span>
+├── outputs.tf           <span class="c"># output blocks</span>
+├── testing.tfvars       <span class="c"># your values (pass with -var-file)</span>
+├── .terraform.lock.hcl  <span class="c"># commit this</span>
+├── .terraform/          <span class="c"># downloaded providers, don't commit</span>
+└── terraform.tfstate    <span class="c"># Terraform's memory, don't commit, don't share</span></pre>
+    <h3>Error decoder</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>You see</th><th>It means</th></tr></thead>
+      <tbody>
+        <tr><td><code>Reference to undeclared input variable</code></td><td>Used <code>var.x</code> without a <code>variable "x"</code> block</td></tr>
+        <tr><td><code>Inconsistent dependency lock file</code></td><td>Run <code>terraform init</code></td></tr>
+        <tr><td><code>Invalid value for variable</code></td><td>A <code>validation</code> rule rejected your input</td></tr>
+        <tr><td><code>Missing resource instance key</code></td><td>Resource has <code>count</code>/<code>for_each</code>; add <code>[0]</code>, <code>["key"]</code>, or <code>[*]</code></td></tr>
+        <tr><td><code>No valid credential sources found</code></td><td>Run <code>aws configure</code>, then <code>aws sts get-caller-identity</code></td></tr>
+        <tr><td><code>Error acquiring the state lock</code></td><td>Someone (or a crashed run) holds the lock</td></tr>
+        <tr><td><code>Backend initialization required</code></td><td>Backend block changed or first use; run <code>terraform init -backend-config=…</code></td></tr>
+        <tr><td><code>Cannot import non-existent remote object</code></td><td>Wrong import ID format for that resource type</td></tr>
+        <tr><td><code>must begin with 'lt-'</code> / <code>invalid ARN</code> in tests</td><td>Mocks need realistic values; add <code>mock_resource</code> defaults</td></tr>
+        <tr><td><code>InvalidGroup.Duplicate</code> / <code>BucketAlreadyExists</code></td><td>Name collision; add your prefix or a random suffix</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="sheet" id="s26">
+  <div class="sheet-head"><div class="sheet-no">26</div><div class="sheet-title"><small>A–Z</small><h2>Glossary</h2></div></div>
+  <div class="sheet-body">
+    <div class="gloss-search">
+      <label for="gloss-filter">Filter</label>
+      <input id="gloss-filter" type="search" placeholder="Try: state, drift, provider" autocomplete="off">
+    </div>
+    <dl class="gloss" id="gloss">
+      <dt>address</dt><dd>The unique path to an object in a configuration, such as <code>aws_instance.web[0]</code> or <code>module.vpc.aws_subnet.a</code>.</dd>
+      <dt>apply</dt><dd>Executes a plan, making real changes, then updates state.</dd>
+      <dt>backend</dt><dd>Where state is stored: local file by default, or remote (S3, HCP Terraform, and others).</dd>
+      <dt>blue/green</dt><dd>Running old and new versions side by side and shifting traffic between them with load-balancer weights.</dd>
+      <dt>bootstrap</dt><dd>A small configuration, with local state, that creates the remote-state bucket the other configurations use.</dd>
+      <dt>canary</dt><dd>Sending a small share of traffic (say 10%) to a new version before committing to it.</dd>
+      <dt>check block</dt><dd>A <code>check { }</code> with assertions evaluated on every plan and apply. Failures are warnings, never errors.</dd>
+      <dt>count</dt><dd>Meta-argument that creates N copies, addressed by index.</dd>
+      <dt>data source</dt><dd>A read-only lookup of something that already exists. Prefixed <code>data.</code></dd>
+      <dt>default_tags</dt><dd>AWS provider setting that adds the same tags to every taggable resource.</dd>
+      <dt>dependency graph</dt><dd>The order Terraform derives from references between blocks.</dd>
+      <dt>desired state</dt><dd>What your configuration says should exist.</dd>
+      <dt>destroy</dt><dd>Removes every object in the current state.</dd>
+      <dt>drift</dt><dd>Differences between real infrastructure and state caused by changes outside Terraform.</dd>
+      <dt>dynamic block</dt><dd>Generates repeated nested blocks inside one resource from a collection.</dd>
+      <dt>expect_failures</dt><dd>In a test <code>run</code>, the list of variables, resources or checks that must fail for the run to pass.</dd>
+      <dt>for_each</dt><dd>Meta-argument that creates one copy per map key or set element, addressed by key.</dd>
+      <dt>HCL</dt><dd>HashiCorp Configuration Language, the syntax of <code>.tf</code> files.</dd>
+      <dt>idempotent</dt><dd>Running it again produces no further change. A second <code>apply</code> with no edits is a no-op.</dd>
+      <dt>import</dt><dd>Brings an existing real object under Terraform management. Use an <code>import</code> block so it shows in the plan.</dd>
+      <dt>init</dt><dd>Prepares a directory: downloads providers and modules and configures the backend.</dd>
+      <dt>lifecycle</dt><dd>Meta-argument block that changes create/destroy behaviour (<code>prevent_destroy</code> and others).</dd>
+      <dt>local value</dt><dd>A named expression inside a module (<code>local.name</code>). Can't be set from outside.</dd>
+      <dt>lock file</dt><dd><code>.terraform.lock.hcl</code>: exact provider versions and checksums. Commit it.</dd>
+      <dt>mock provider</dt><dd><code>mock_provider</code> in a test file: answers every API call with fake values, so tests run offline.</dd>
+      <dt>module</dt><dd>A folder of Terraform configuration with inputs and outputs. Your working directory is the root module.</dd>
+      <dt>moved block</dt><dd>Records an address change (rename, module, <code>for_each</code> key) so the object is moved in state instead of replaced.</dd>
+      <dt>optional()</dt><dd>Marks an object attribute as optional, with an optional default: <code>optional(number, 3)</code>.</dd>
+      <dt>output</dt><dd>A value exposed after apply, printed or consumed by other configurations.</dd>
+      <dt>override_data</dt><dd>In tests, pins a data source to fixed values, such as pretending to be in another Region.</dd>
+      <dt>partial configuration</dt><dd>An empty or incomplete <code>backend</code> block completed at init time with <code>-backend-config</code>.</dd>
+      <dt>plan</dt><dd>The proposed set of changes needed to make reality match the configuration.</dd>
+      <dt>postcondition</dt><dd>A <code>lifecycle</code> rule checked after a resource is created or read, using <code>self</code>. Blocks on failure.</dd>
+      <dt>precondition</dt><dd>A <code>lifecycle</code> rule checked before a resource is planned. Can use several variables and data sources. Blocks on failure.</dd>
+      <dt>provider</dt><dd>A plugin that maps resource blocks to one platform's API.</dd>
+      <dt>refresh</dt><dd>Reading the current real state of managed objects. Happens at the start of every plan.</dd>
+      <dt>removed block</dt><dd>Drops an object from state; with <code>destroy = false</code>, it keeps running in the cloud.</dd>
+      <dt>replace</dt><dd>Destroy and re-create an object, usually because a creation-only argument changed.</dd>
+      <dt>resource</dt><dd>An infrastructure object Terraform creates and manages.</dd>
+      <dt>sensitive</dt><dd>Flag that hides a value from CLI output. It is still stored in state.</dd>
+      <dt>splat</dt><dd>The <code>[*]</code> operator, which collects one attribute from every element of a list.</dd>
+      <dt>state</dt><dd>Terraform's record mapping addresses to real object IDs and attributes.</dd>
+      <dt>state lock</dt><dd>Prevents two runs from writing the same state at once.</dd>
+      <dt>templatefile</dt><dd>Function that renders a file, replacing <code>${…}</code> placeholders with values.</dd>
+      <dt>terraform test</dt><dd>Runs <code>.tftest.hcl</code> files: scenarios with inputs, assertions, and optional mocks.</dd>
+      <dt>tfvars</dt><dd>A file that assigns values to variables. Only <code>terraform.tfvars</code> and <code>*.auto.tfvars</code> load automatically.</dd>
+      <dt>use_lockfile</dt><dd>S3 backend setting (Terraform 1.10+) that locks state with a lock file in the bucket itself.</dd>
+      <dt>validation</dt><dd>A rule inside a variable block that rejects bad input before any API call.</dd>
+      <dt>variable</dt><dd>An input to a module (<code>var.name</code>).</dd>
+      <dt>weighted target group</dt><dd>An ALB <code>forward</code> action that splits traffic across target groups by weight.</dd>
+    </dl>
+    <p class="gloss-empty" id="gloss-empty" hidden>No term matches that. Try a shorter word.</p>
+  </div>
+</section>
+
+<footer>
+  Terraform Field Guide · written for Terraform 1.12 and AWS provider 6.x · examples use <code>us-west-2</code> and IDs like <code>user07</code>. Official references: <a href="https://developer.hashicorp.com/terraform/docs" target="_blank" rel="noopener">Terraform docs</a> · <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs" target="_blank" rel="noopener">AWS provider docs</a>.
+</footer>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var input = document.getElementById('gloss-filter');
+  var dl = document.getElementById('gloss');
+  var empty = document.getElementById('gloss-empty');
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    var shown = 0;
+    var dts = dl.querySelectorAll('dt');
+    for (var i = 0; i < dts.length; i++) {
+      var dt = dts[i], dd = dt.nextElementSibling;
+      var hit = !q || dt.textContent.toLowerCase().indexOf(q) > -1 || dd.textContent.toLowerCase().indexOf(q) > -1;
+      dt.hidden = !hit; dd.hidden = !hit;
+      if (hit) shown++;
+    }
+    empty.hidden = shown !== 0;
+  });
+
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-btn');
+  function isDark() {
+    var t = root.getAttribute('data-theme');
+    if (t) return t === 'dark';
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function label() { btn.textContent = isDark() ? 'Switch to light sheet' : 'Switch to dark sheet'; }
+  try { var saved = localStorage.getItem('tf-guide-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+  label();
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('tf-guide-theme', next); } catch (e) {}
+    label();
+  });
+
+  var details = document.getElementById('index-details');
+  if (window.matchMedia && window.matchMedia('(max-width: 960px)').matches) details.removeAttribute('open');
+})();
+</script>
+</body>
+</html>

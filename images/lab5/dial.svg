@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 250" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="The launch sequence: 100/0, 90/10, 50/50, 0/100, and rollback to 100/0">
+  <rect x="1" y="1" width="958" height="248" rx="16" fill="#F5F8FB" stroke="#D3DEEA" stroke-width="2"/>
+  <text x="32" y="38" font-size="18" font-weight="700" fill="#0E2233">The launch sequence: one variable, five applies</text>
+
+  <g font-size="12">
+    <!-- step 0 -->
+    <g transform="translate(32 64)">
+      <text x="0" y="0" font-weight="800" fill="#0E2233">0 · Before</text>
+      <rect x="0" y="14" width="160" height="34" rx="6" fill="#1F5FAE"/>
+      <text x="80" y="36" font-weight="700" fill="#FFFFFF" text-anchor="middle">100 / 0</text>
+      <text x="0" y="72" fill="#3E5468">green runs, gets</text><text x="0" y="88" fill="#3E5468">no traffic</text>
+    </g>
+    <g transform="translate(214 64)">
+      <text x="0" y="0" font-weight="800" fill="#0E2233">1 · Canary</text>
+      <rect x="0" y="14" width="144" height="34" rx="6" fill="#1F5FAE"/><rect x="144" y="14" width="16" height="34" fill="#2E8B57"/>
+      <text x="72" y="36" font-weight="700" fill="#FFFFFF" text-anchor="middle">90 / 10</text>
+      <text x="0" y="72" fill="#3E5468">a few brave users</text><text x="0" y="88" fill="#3E5468">try v2.0</text>
+    </g>
+    <g transform="translate(396 64)">
+      <text x="0" y="0" font-weight="800" fill="#0E2233">2 · Half &amp; half</text>
+      <rect x="0" y="14" width="80" height="34" rx="6" fill="#1F5FAE"/><rect x="80" y="14" width="80" height="34" fill="#2E8B57"/>
+      <text x="80" y="36" font-weight="700" fill="#FFFFFF" text-anchor="middle">50 / 50</text>
+      <text x="0" y="72" fill="#3E5468">watch errors</text><text x="0" y="88" fill="#3E5468">and latency</text>
+    </g>
+    <g transform="translate(578 64)">
+      <text x="0" y="0" font-weight="800" fill="#22703F">3 · Launch!</text>
+      <rect x="0" y="14" width="160" height="34" rx="6" fill="#2E8B57"/>
+      <text x="80" y="36" font-weight="700" fill="#FFFFFF" text-anchor="middle">0 / 100</text>
+      <text x="0" y="72" fill="#3E5468">v2.0 is live.</text><text x="0" y="88" fill="#3E5468">blue stays warm</text>
+    </g>
+    <g transform="translate(760 64)">
+      <text x="0" y="0" font-weight="800" fill="#A23024">4 · Rollback</text>
+      <rect x="0" y="14" width="160" height="34" rx="6" fill="#1F5FAE"/>
+      <text x="80" y="36" font-weight="700" fill="#FFFFFF" text-anchor="middle">100 / 0</text>
+      <text x="0" y="72" fill="#3E5468">seconds, not</text><text x="0" y="88" fill="#3E5468">minutes</text>
+    </g>
+  </g>
+  <rect x="32" y="186" width="896" height="44" rx="10" fill="#0E2233"/>
+  <text x="52" y="213" font-size="12.5" fill="#C9D8E8">Every step: <tspan fill="#FFD27A" font-family="Menlo, Consolas, monospace">~ aws_lb_listener.http</tspan> updated in place. No instance is replaced. That's the whole trick.</text>
+</svg>

@@ -1,0 +1,21 @@
+# Instructor-only material: keep local, never publish
+tflab2-solution/
+tflab5-solution/
+vpc-escape-room/INSTRUCTOR-GUIDE.md
+s3-launch-week/INSTRUCTOR-GUIDE.md
+**/INSTRUCTOR-GUIDE.md
+archive/
+
+# Field guide source fragment (index.html is the published page)
+terraform-field-guide/field-guide.html
+
+# Terraform working files
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+backend.hcl
+
+# OS / editor
+.DS_Store
+.vscode/

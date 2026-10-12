@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 240" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Mission map: briefing, callsign, shields, beacon, black box, fleet, drift, splashdown">
+  <rect x="1" y="1" width="958" height="238" rx="16" fill="#F5F8FB" stroke="#D3DEEA" stroke-width="2"/>
+  <text x="32" y="38" font-size="18" font-weight="700" fill="#0E2233">Mission map</text>
+  <text x="928" y="38" font-size="13" fill="#5B7186" text-anchor="end">minutes are a guide, not a timer</text>
+  <path d="M60,110 C120,70 180,150 240,110 S360,70 420,110 S540,150 600,110 S720,70 780,110 S870,140 900,110" fill="none" stroke="#9FB4C8" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round"/>
+  <g font-weight="700" text-anchor="middle">
+    <circle cx="60"  cy="110" r="26" fill="#FFFFFF" stroke="#5B7186" stroke-width="3"/><text x="60"  y="117" font-size="20" fill="#5B7186">0</text>
+    <circle cx="180" cy="110" r="26" fill="#FFFFFF" stroke="#1F5FAE" stroke-width="3"/><text x="180" y="117" font-size="20" fill="#1F5FAE">1</text>
+    <circle cx="300" cy="110" r="26" fill="#FFFFFF" stroke="#1F5FAE" stroke-width="3"/><text x="300" y="117" font-size="20" fill="#1F5FAE">2</text>
+    <circle cx="420" cy="110" r="30" fill="#E2702B"/><text x="420" y="118" font-size="22" fill="#FFFFFF">3</text>
+    <circle cx="540" cy="110" r="26" fill="#FFFFFF" stroke="#1F5FAE" stroke-width="3"/><text x="540" y="117" font-size="20" fill="#1F5FAE">4</text>
+    <circle cx="660" cy="110" r="26" fill="#FFFFFF" stroke="#1F5FAE" stroke-width="3"/><text x="660" y="117" font-size="20" fill="#1F5FAE">5</text>
+    <circle cx="780" cy="110" r="26" fill="#FFFFFF" stroke="#1F5FAE" stroke-width="3"/><text x="780" y="117" font-size="20" fill="#1F5FAE">6</text>
+    <circle cx="900" cy="110" r="26" fill="#2E8B57"/><text x="900" y="117" font-size="20" fill="#FFFFFF">7</text>
+  </g>
+  <g font-size="14" font-weight="700" fill="#0E2233" text-anchor="middle">
+    <text x="60" y="168">Briefing</text><text x="180" y="168">Callsign</text><text x="300" y="168">Shields up</text>
+    <text x="420" y="168">Light the beacon</text><text x="540" y="168">Black box</text><text x="660" y="168">Fleet</text>
+    <text x="780" y="168">Drift detective</text><text x="900" y="168">Splashdown</text>
+  </g>
+  <g font-size="12" fill="#5B7186" text-anchor="middle" font-family="Menlo, Consolas, monospace">
+    <text x="60" y="188">5 min</text><text x="180" y="188">variables</text><text x="300" y="188">security group</text>
+    <text x="420" y="188">EC2 + user_data</text><text x="540" y="188">S3 + random</text><text x="660" y="188">count</text>
+    <text x="780" y="188">plan vs reality</text><text x="900" y="188">destroy</text>
+    <text x="180" y="206">8 min</text><text x="300" y="206">8 min</text><text x="420" y="206">12 min</text>
+    <text x="540" y="206">10 min</text><text x="660" y="206">8 min</text><text x="780" y="206">5 min</text><text x="900" y="206">4 min</text>
+  </g>
+</svg>

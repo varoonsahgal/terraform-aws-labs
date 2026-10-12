@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 350" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Each user's own state file tracks only their own instance in the shared AWS account">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5B7186"/></marker>
+  </defs>
+  <rect x="1" y="1" width="958" height="348" rx="16" fill="#F5F8FB" stroke="#D3DEEA" stroke-width="2"/>
+  <text x="32" y="42" font-size="20" font-weight="700" fill="#0E2233">One account, many state files</text>
+
+  <g font-size="14">
+    <!-- users -->
+    <g>
+      <rect x="60" y="66" width="230" height="78" rx="10" fill="#FFFFFF" stroke="#1F5FAE" stroke-width="2"/>
+      <circle cx="88" cy="94" r="12" fill="#1F5FAE"/><text x="88" y="99" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="700">01</text>
+      <text x="110" y="99" font-weight="700" fill="#0E2233">user01's VM</text>
+      <text x="76" y="128" font-family="Menlo, Consolas, monospace" font-size="12" fill="#3E5468">tf-lab/terraform.tfstate</text>
+    </g>
+    <g>
+      <rect x="365" y="66" width="230" height="78" rx="10" fill="#FFFFFF" stroke="#E2702B" stroke-width="2"/>
+      <circle cx="393" cy="94" r="12" fill="#E2702B"/><text x="393" y="99" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="700">02</text>
+      <text x="415" y="99" font-weight="700" fill="#0E2233">user02's VM</text>
+      <text x="381" y="128" font-family="Menlo, Consolas, monospace" font-size="12" fill="#3E5468">tf-lab/terraform.tfstate</text>
+    </g>
+    <g>
+      <rect x="670" y="66" width="230" height="78" rx="10" fill="#FFFFFF" stroke="#2E8B57" stroke-width="2"/>
+      <circle cx="698" cy="94" r="12" fill="#2E8B57"/><text x="698" y="99" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="700">03</text>
+      <text x="720" y="99" font-weight="700" fill="#0E2233">user03's VM</text>
+      <text x="686" y="128" font-family="Menlo, Consolas, monospace" font-size="12" fill="#3E5468">tf-lab/terraform.tfstate</text>
+    </g>
+  </g>
+
+  <!-- account -->
+  <rect x="32" y="190" width="896" height="140" rx="12" fill="#FFFFFF" stroke="#0E2233" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="52" y="318" font-size="13" font-weight="700" fill="#0E2233" letter-spacing="1">SHARED AWS ACCOUNT · us-west-2</text>
+  <g font-family="Menlo, Consolas, monospace" font-size="12.5" text-anchor="middle">
+    <rect x="60" y="230" width="230" height="56" rx="8" fill="#E8F0FA"/>
+    <text x="175" y="254" fill="#0E2233">EC2 instance</text>
+    <text x="175" y="273" fill="#1F5FAE" font-weight="700">user01-terraform-app-server</text>
+    <rect x="365" y="230" width="230" height="56" rx="8" fill="#FFF1E5"/>
+    <text x="480" y="254" fill="#0E2233">EC2 instance</text>
+    <text x="480" y="273" fill="#B4521A" font-weight="700">user02-terraform-app-server</text>
+    <rect x="670" y="230" width="230" height="56" rx="8" fill="#E7F5EC"/>
+    <text x="785" y="254" fill="#0E2233">EC2 instance</text>
+    <text x="785" y="273" fill="#22703F" font-weight="700">user03-terraform-app-server</text>
+  </g>
+  <g stroke-width="2.5" marker-end="url(#ar)">
+    <line x1="175" y1="144" x2="175" y2="226" stroke="#1F5FAE"/>
+    <line x1="480" y1="144" x2="480" y2="226" stroke="#E2702B"/>
+    <line x1="785" y1="144" x2="785" y2="226" stroke="#2E8B57"/>
+  </g>
+  <text x="200" y="174" font-size="12" fill="#3E5468">tracks only this one</text>
+</svg>

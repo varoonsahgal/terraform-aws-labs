@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 320" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Drift: someone changes AWS directly; plan refreshes state from AWS, compares it with the code, and proposes to undo the change">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5B7186"/></marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#C0392B"/></marker>
+  </defs>
+  <rect x="1" y="1" width="958" height="318" rx="16" fill="#F5F8FB" stroke="#D3DEEA" stroke-width="2"/>
+  <text x="32" y="40" font-size="18" font-weight="700" fill="#0E2233">Drift: when reality stops matching the code</text>
+
+  <!-- code -->
+  <rect x="40" y="80" width="240" height="140" rx="10" fill="#FFFFFF" stroke="#1F5FAE" stroke-width="2"/>
+  <text x="56" y="106" font-size="14" font-weight="700" fill="#1F5FAE">① Your code</text>
+  <g font-size="12" font-family="Menlo, Consolas, monospace" fill="#0E2233">
+    <text x="56" y="136">tags = {</text>
+    <text x="56" y="156">  Name = "user07-lab2-</text>
+    <text x="56" y="172">          beacon-1"</text>
+    <text x="56" y="192">}</text>
+  </g>
+
+  <!-- state -->
+  <rect x="360" y="80" width="240" height="140" rx="10" fill="#FFFFFF" stroke="#5B7186" stroke-width="2"/>
+  <text x="376" y="106" font-size="14" font-weight="700" fill="#3E5468">② State (after refresh)</text>
+  <g font-size="12" font-family="Menlo, Consolas, monospace" fill="#0E2233">
+    <text x="376" y="136">Name     = "user07-…-1"</text>
+    <text x="376" y="156" fill="#A23024" font-weight="700">Sabotage = "true"</text>
+  </g>
+  <text x="376" y="196" font-size="11.5" fill="#5B7186">plan re-reads AWS first</text>
+
+  <!-- aws -->
+  <rect x="680" y="80" width="240" height="140" rx="10" fill="#FBECEA" stroke="#C0392B" stroke-width="2"/>
+  <text x="696" y="106" font-size="14" font-weight="700" fill="#A23024">③ Real AWS</text>
+  <text x="696" y="136" font-size="12" fill="#0E2233">Someone ran</text>
+  <text x="696" y="156" font-size="11" fill="#0E2233" font-family="Menlo, Consolas, monospace">aws ec2 create-tags …</text>
+  <text x="696" y="176" font-size="12" fill="#0E2233">outside of Terraform.</text>
+  <path d="M880,96 L866,124 L878,124 L868,150 L892,116 L880,116 L888,96 Z" fill="#E2702B"/>
+
+  <!-- arrows -->
+  <line x1="680" y1="150" x2="604" y2="150" stroke="#C0392B" stroke-width="2.5" marker-end="url(#arr)"/>
+  <text x="642" y="142" font-size="11" fill="#A23024" text-anchor="middle">refresh</text>
+  <line x1="360" y1="150" x2="284" y2="150" stroke="#5B7186" stroke-width="2.5" marker-end="url(#ar)"/>
+  <line x1="284" y1="166" x2="356" y2="166" stroke="#5B7186" stroke-width="2.5" marker-end="url(#ar)"/>
+  <text x="320" y="142" font-size="11" fill="#3E5468" text-anchor="middle">compare</text>
+
+  <!-- result -->
+  <rect x="40" y="244" width="880" height="54" rx="10" fill="#0E2233"/>
+  <text x="60" y="276" font-size="13" font-family="Menlo, Consolas, monospace" fill="#FFD27A">~ update in-place</text>
+  <text x="220" y="276" font-size="13" font-family="Menlo, Consolas, monospace" fill="#F2B8B0">- "Sabotage" = "true" -&gt; null</text>
+  <text x="900" y="276" font-size="13" fill="#C9D8E8" text-anchor="end">apply puts reality back to match the code</text>
+</svg>

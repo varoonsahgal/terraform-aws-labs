@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 320" font-family="Georgia, 'Times New Roman', serif" role="img" aria-label="Night at the Museum: Terraform Lab 4">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A1420"/><stop offset="1" stop-color="#2C2133"/></linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE7A8" stop-opacity=".55"/><stop offset="1" stop-color="#FFE7A8" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="960" height="320" rx="18" fill="url(#wall)"/>
+  <rect x="0" y="270" width="960" height="50" fill="#3A2B2A"/>
+  <g stroke="#4A3836" stroke-width="2"><line x1="0" y1="282" x2="960" y2="282"/><line x1="0" y1="298" x2="960" y2="298"/></g>
+
+  <!-- spotlights + frames -->
+  <g>
+    <polygon points="90,0 110,0 190,250 10,250" fill="url(#beam)"/>
+    <rect x="44" y="96" width="112" height="132" fill="#C79A3A"/><rect x="54" y="106" width="92" height="112" fill="#203047"/>
+    <text x="100" y="168" font-size="15" fill="#FFE7A8" text-anchor="middle" font-family="Menlo, Consolas, monospace">import</text>
+    <rect x="76" y="236" width="48" height="12" fill="#C79A3A"/>
+  </g>
+  <g>
+    <polygon points="250,0 270,0 350,250 170,250" fill="url(#beam)"/>
+    <rect x="204" y="96" width="112" height="132" fill="#C79A3A"/><rect x="214" y="106" width="92" height="112" fill="#3B2140"/>
+    <text x="260" y="168" font-size="15" fill="#FFE7A8" text-anchor="middle" font-family="Menlo, Consolas, monospace">moved</text>
+    <rect x="236" y="236" width="48" height="12" fill="#C79A3A"/>
+  </g>
+  <!-- pedestal relic -->
+  <g transform="translate(420 0)">
+    <polygon points="40,0 60,0 120,240 -20,240" fill="url(#beam)"/>
+    <rect x="10" y="190" width="80" height="80" fill="#E8E1D6"/><rect x="0" y="182" width="100" height="12" fill="#F4EFE7"/>
+    <path d="M30,182 C30,140 70,140 70,182 Z" fill="#E2B04A"/><circle cx="50" cy="150" r="14" fill="#E2B04A"/>
+    <circle cx="45" cy="148" r="2.5" fill="#1A1420"/><circle cx="55" cy="148" r="2.5" fill="#1A1420"/>
+  </g>
+
+  <text x="560" y="96" font-size="15" font-weight="700" fill="#E2B04A" letter-spacing="5" font-family="Helvetica, Arial, sans-serif">TERRAFORM LAB 4</text>
+  <text x="556" y="152" font-size="52" font-style="italic" fill="#F4EFE7">Night at the</text>
+  <text x="556" y="208" font-size="58" font-weight="700" fill="#E2B04A">Museum</text>
+  <text x="560" y="244" font-size="15" fill="#CFC3D9" font-family="Helvetica, Arial, sans-serif">import · moved · removed · guardrails · tests</text>
+</svg>

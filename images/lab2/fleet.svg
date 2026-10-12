@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 270" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Adding count: the existing aws_instance.beacon moves to beacon[0]; beacon[1] is created">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5B7186"/></marker>
+    <marker id="arg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2E8B57"/></marker>
+  </defs>
+  <rect x="1" y="1" width="958" height="268" rx="16" fill="#F5F8FB" stroke="#D3DEEA" stroke-width="2"/>
+  <text x="32" y="40" font-size="18" font-weight="700" fill="#0E2233">Adding <tspan font-family="Menlo, Consolas, monospace">count</tspan> to a resource that already exists</text>
+
+  <text x="40" y="78" font-size="12" font-weight="700" letter-spacing="1.2" fill="#5B7186">BEFORE · NO COUNT</text>
+  <rect x="40" y="92" width="260" height="70" rx="10" fill="#FFFFFF" stroke="#1F5FAE" stroke-width="2"/>
+  <text x="56" y="122" font-size="13" font-family="Menlo, Consolas, monospace" fill="#0E2233">aws_instance.beacon</text>
+  <text x="56" y="144" font-size="12" fill="#5B7186">i-0a1b… · beacon 1</text>
+
+  <text x="560" y="78" font-size="12" font-weight="700" letter-spacing="1.2" fill="#5B7186">AFTER · count = 2</text>
+  <rect x="560" y="92" width="360" height="70" rx="10" fill="#FFFFFF" stroke="#1F5FAE" stroke-width="2"/>
+  <text x="576" y="122" font-size="13" font-family="Menlo, Consolas, monospace" fill="#0E2233">aws_instance.beacon<tspan fill="#E2702B" font-weight="700">[0]</tspan></text>
+  <text x="576" y="144" font-size="12" fill="#5B7186">i-0a1b… · same server, new address</text>
+
+  <rect x="560" y="178" width="360" height="70" rx="10" fill="#EAF6EF" stroke="#2E8B57" stroke-width="2"/>
+  <text x="576" y="208" font-size="13" font-family="Menlo, Consolas, monospace" fill="#0E2233">aws_instance.beacon<tspan fill="#2E8B57" font-weight="700">[1]</tspan></text>
+  <text x="576" y="230" font-size="12" fill="#22703F">brand new · beacon 2</text>
+
+  <line x1="300" y1="127" x2="556" y2="127" stroke="#5B7186" stroke-width="2.5" marker-end="url(#ar)"/>
+  <text x="428" y="118" font-size="12.5" fill="#3E5468" text-anchor="middle" font-family="Menlo, Consolas, monospace">has moved to</text>
+  <path d="M428,140 C428,200 480,213 556,213" fill="none" stroke="#2E8B57" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arg)"/>
+  <text x="400" y="232" font-size="12.5" fill="#22703F" font-family="Menlo, Consolas, monospace">+ will be created</text>
+</svg>

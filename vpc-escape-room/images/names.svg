@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 300" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Name uniqueness scopes: Name tags not enforced; security groups per VPC; ALB, target group, ASG, launch template, log group per Region per account">
+  <rect x="1" y="1" width="958" height="298" rx="16" fill="#F5F8FB" stroke="#D3DEEA" stroke-width="2"/>
+  <text x="32" y="40" font-size="18" font-weight="700" fill="#0E2233">Who else can grab the name you want?</text>
+
+  <g>
+    <rect x="24" y="62" width="912" height="66" rx="10" fill="#FFFFFF" stroke="#D3DEEA"/>
+    <rect x="40" y="80" width="200" height="30" rx="15" fill="#DCE6F0"/>
+    <text x="140" y="100" font-size="12" font-weight="700" fill="#3E5468" text-anchor="middle">NOBODY · NOT ENFORCED</text>
+    <text x="258" y="92" font-size="14" font-weight="700" fill="#0E2233">Name tags</text>
+    <text x="258" y="112" font-size="12.5" fill="#3E5468">VPC, subnets, route tables, NACLs, endpoints. Duplicates are allowed, which is exactly why they're dangerous.</text>
+  </g>
+  <g>
+    <rect x="24" y="138" width="912" height="66" rx="10" fill="#FFFFFF" stroke="#D3DEEA"/>
+    <rect x="40" y="156" width="200" height="30" rx="15" fill="#F7C9A6"/>
+    <text x="140" y="176" font-size="12" font-weight="700" fill="#8A3E12" text-anchor="middle">SAME VPC</text>
+    <text x="258" y="168" font-size="14" font-weight="700" fill="#0E2233">Security groups</text>
+    <text x="258" y="188" font-size="12.5" fill="#3E5468">Unique within one VPC. In your own VPC-Lab you're safe, but in a shared VPC two "web-sg"s collide.</text>
+  </g>
+  <g>
+    <rect x="24" y="214" width="912" height="66" rx="10" fill="#FFFFFF" stroke="#D3DEEA"/>
+    <rect x="40" y="232" width="200" height="30" rx="15" fill="#C0392B"/>
+    <text x="140" y="252" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">WHOLE ACCOUNT + REGION</text>
+    <text x="258" y="244" font-size="14" font-weight="700" fill="#0E2233">ALB · target group · ASG · launch template · log group</text>
+    <text x="258" y="264" font-size="12.5" fill="#3E5468">Separate VPCs don't help: the first person to create "app-alb" in us-west-2 wins, and everyone else gets an error.</text>
+  </g>
+</svg>

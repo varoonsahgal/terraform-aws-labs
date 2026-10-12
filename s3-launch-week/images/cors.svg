@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 340" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="CORS: the page on the CloudFront origin calls the Lambda function URL on another origin; the browser only hands over the response if Access-Control-Allow-Origin matches">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5B7186"/></marker>
+    <marker id="arg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2E8B57"/></marker>
+  </defs>
+  <rect x="1" y="1" width="958" height="338" rx="16" fill="#F5F8FB" stroke="#D3DEEA" stroke-width="2"/>
+  <text x="32" y="40" font-size="18" font-weight="700" fill="#0E2233">Two origins, one browser bouncer</text>
+
+  <!-- browser -->
+  <rect x="28" y="64" width="300" height="200" rx="12" fill="#FFFFFF" stroke="#C7D5E4" stroke-width="2"/>
+  <rect x="28" y="64" width="300" height="32" rx="12" fill="#E9EFF5"/><rect x="28" y="84" width="300" height="12" fill="#E9EFF5"/>
+  <text x="44" y="85" font-size="11" fill="#3E5468" font-family="Menlo, Consolas, monospace">https://d1abc.cloudfront.net</text>
+  <rect x="44" y="108" width="268" height="72" rx="6" fill="#120B2E"/>
+  <text x="178" y="138" font-size="13" font-weight="700" fill="#FFD23F" text-anchor="middle" font-family="'Courier New', monospace">VISITORS: 000042</text>
+  <text x="178" y="162" font-size="11" fill="#3BCEAC" text-anchor="middle" font-family="'Courier New', monospace">counter.js → fetch()</text>
+  <rect x="44" y="194" width="268" height="54" rx="8" fill="#FFF4EA" stroke="#E2702B"/>
+  <text x="178" y="216" font-size="12" font-weight="700" fill="#B4521A" text-anchor="middle">Browser checks the reply:</text>
+  <text x="178" y="236" font-size="11" fill="#0E2233" text-anchor="middle">"Is my origin on the guest list?"</text>
+
+  <!-- lambda -->
+  <rect x="620" y="64" width="300" height="88" rx="12" fill="#FFFFFF" stroke="#1F5FAE" stroke-width="2"/>
+  <text x="770" y="92" font-size="13" font-weight="700" fill="#1F5FAE" text-anchor="middle">Lambda function URL</text>
+  <text x="770" y="112" font-size="11" fill="#3E5468" text-anchor="middle" font-family="Menlo, Consolas, monospace">https://xyz.lambda-url.…aws</text>
+  <text x="770" y="134" font-size="11" fill="#3E5468" text-anchor="middle">a different origin</text>
+  <rect x="660" y="184" width="220" height="64" rx="12" fill="#EAF6EF" stroke="#2E8B57" stroke-width="2"/>
+  <text x="770" y="212" font-size="13" font-weight="700" fill="#22703F" text-anchor="middle">DynamoDB</text>
+  <text x="770" y="232" font-size="11" fill="#22703F" text-anchor="middle" font-family="Menlo, Consolas, monospace">ADD visits :one</text>
+  <line x1="770" y1="152" x2="770" y2="180" stroke="#2E8B57" stroke-width="2" marker-end="url(#arg)"/>
+
+  <!-- arrows -->
+  <line x1="328" y1="96" x2="616" y2="96" stroke="#5B7186" stroke-width="2.5" marker-end="url(#ar)"/>
+  <text x="472" y="88" font-size="11" fill="#3E5468" text-anchor="middle" font-family="Menlo, Consolas, monospace">GET  Origin: https://d1abc.cloudfront.net</text>
+  <line x1="616" y1="128" x2="332" y2="210" stroke="#2E8B57" stroke-width="2.5" marker-end="url(#arg)"/>
+  <text x="520" y="150" font-size="11" fill="#22703F" text-anchor="middle" font-family="Menlo, Consolas, monospace">Access-Control-Allow-Origin:</text>
+  <text x="520" y="166" font-size="11" fill="#22703F" text-anchor="middle" font-family="Menlo, Consolas, monospace">https://d1abc.cloudfront.net</text>
+
+  <rect x="28" y="280" width="904" height="42" rx="10" fill="#0E2233"/>
+  <text x="48" y="306" font-size="12.5" fill="#C9D8E8">Header missing → the request still ran (the count still went up!), but the browser hides the reply. <tspan fill="#FFD23F">curl</tspan> doesn't enforce CORS.</text>
+</svg>

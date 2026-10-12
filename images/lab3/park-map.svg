@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 400" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Park map: park.tfvars feeds a for_each over the ride module, creating a coaster, carousel and ferris wheel, plus an ops dashboard; state lives in your vault bucket">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5B4A6E"/></marker>
+  </defs>
+  <rect x="1" y="1" width="958" height="398" rx="16" fill="#FBF6EE" stroke="#E7D9C4" stroke-width="2"/>
+  <!-- grass paths -->
+  <path d="M190,200 C260,200 280,90 360,90 M190,200 L360,200 M190,200 C260,200 280,310 360,310" fill="none" stroke="#E7D9C4" stroke-width="14" stroke-linecap="round"/>
+  <text x="32" y="38" font-size="18" font-weight="700" fill="#2A0E4A">Park map: what you'll build</text>
+
+  <!-- entrance: tfvars -->
+  <rect x="30" y="150" width="160" height="100" rx="12" fill="#FFFFFF" stroke="#2A0E4A" stroke-width="2"/>
+  <path d="M30,162 Q110,128 190,162" fill="#FFD23F" stroke="#2A0E4A" stroke-width="2"/>
+  <text x="110" y="188" font-size="12" font-weight="700" fill="#2A0E4A" text-anchor="middle" letter-spacing="1">ENTRANCE</text>
+  <text x="110" y="210" font-size="13" fill="#2A0E4A" text-anchor="middle" font-family="Menlo, Consolas, monospace">park.tfvars</text>
+  <text x="110" y="230" font-size="11" fill="#6B5B7B" text-anchor="middle">rides = { … }</text>
+
+  <!-- rides -->
+  <g>
+    <rect x="360" y="52" width="270" height="76" rx="12" fill="#FFFFFF" stroke="#EE4266" stroke-width="2.5"/>
+    <rect x="360" y="52" width="10" height="76" rx="5" fill="#EE4266"/>
+    <text x="384" y="78" font-size="14" font-weight="800" fill="#2A0E4A">COASTER ★★★★★</text>
+    <text x="384" y="98" font-size="11" fill="#6B5B7B" font-family="Menlo, Consolas, monospace">module.rides["coaster"]</text>
+    <text x="384" y="116" font-size="11" fill="#6B5B7B">line · exit · sign</text>
+  </g>
+  <g>
+    <rect x="360" y="162" width="270" height="76" rx="12" fill="#FFFFFF" stroke="#3BCEAC" stroke-width="2.5"/>
+    <rect x="360" y="162" width="10" height="76" rx="5" fill="#3BCEAC"/>
+    <text x="384" y="188" font-size="14" font-weight="800" fill="#2A0E4A">CAROUSEL ★</text>
+    <text x="384" y="208" font-size="11" fill="#6B5B7B" font-family="Menlo, Consolas, monospace">module.rides["carousel"]</text>
+    <text x="384" y="226" font-size="11" fill="#6B5B7B">line · exit · sign</text>
+  </g>
+  <g>
+    <rect x="360" y="272" width="270" height="76" rx="12" fill="#FFFFFF" stroke="#E2702B" stroke-width="2.5"/>
+    <rect x="360" y="272" width="10" height="76" rx="5" fill="#E2702B"/>
+    <text x="384" y="298" font-size="14" font-weight="800" fill="#2A0E4A">FERRIS-WHEEL ★★</text>
+    <text x="384" y="318" font-size="11" fill="#6B5B7B" font-family="Menlo, Consolas, monospace">module.rides["ferris-wheel"]</text>
+    <text x="384" y="336" font-size="11" fill="#6B5B7B">default color via optional()</text>
+  </g>
+  <text x="272" y="370" font-size="11" fill="#6B5B7B" text-anchor="middle" font-family="Menlo, Consolas, monospace">for_each = var.rides</text>
+
+  <!-- ops board -->
+  <rect x="690" y="52" width="240" height="150" rx="12" fill="#2A0E4A"/>
+  <text x="708" y="78" font-size="12" font-weight="700" fill="#FFD23F" letter-spacing="1">OPS BOARD</text>
+  <g fill="none" stroke-width="2.5">
+    <rect x="708" y="90" width="64" height="48" rx="4" fill="#3B1D5E" stroke="none"/><path d="M712,130 L726,120 L740,126 L754,104 L768,110" stroke="#EE4266"/>
+    <rect x="780" y="90" width="64" height="48" rx="4" fill="#3B1D5E" stroke="none"/><path d="M784,128 L798,126 L812,122 L826,124 L840,118" stroke="#3BCEAC"/>
+    <rect x="852" y="90" width="64" height="48" rx="4" fill="#3B1D5E" stroke="none"/><path d="M856,130 L870,124 L884,128 L898,116 L912,120" stroke="#E2702B"/>
+  </g>
+  <text x="708" y="166" font-size="11" fill="#D9C8F0" font-family="Menlo, Consolas, monospace">aws_cloudwatch_dashboard</text>
+  <text x="708" y="184" font-size="11" fill="#D9C8F0">one widget per ride, generated</text>
+
+  <!-- vault -->
+  <rect x="690" y="236" width="240" height="112" rx="12" fill="#FFFFFF" stroke="#2A0E4A" stroke-width="2" stroke-dasharray="6 4"/>
+  <circle cx="730" cy="292" r="26" fill="#FFD23F" stroke="#2A0E4A" stroke-width="2"/>
+  <circle cx="730" cy="292" r="8" fill="#2A0E4A"/>
+  <text x="770" y="270" font-size="12" font-weight="700" fill="#2A0E4A" letter-spacing="1">THE VAULT</text>
+  <text x="770" y="290" font-size="11" fill="#6B5B7B" font-family="Menlo, Consolas, monospace">user07-tfstate-a1b2c3</text>
+  <text x="770" y="308" font-size="11" fill="#6B5B7B">versioned · locked</text>
+  <text x="770" y="326" font-size="11" fill="#6B5B7B">holds the park's state</text>
+
+  <g stroke="#5B4A6E" stroke-width="2" fill="none">
+    <path d="M630,90 L686,110" marker-end="url(#ar)"/><path d="M630,200 L686,150" marker-end="url(#ar)"/><path d="M630,310 L686,180" marker-end="url(#ar)" stroke-dasharray="0"/>
+  </g>
+</svg>

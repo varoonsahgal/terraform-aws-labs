@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 400" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Preview of your beacon web page in a browser">
+  <rect x="1" y="1" width="958" height="398" rx="16" fill="#F5F8FB" stroke="#D3DEEA" stroke-width="2"/>
+  <!-- browser chrome -->
+  <rect x="120" y="24" width="720" height="352" rx="12" fill="#FFFFFF" stroke="#C7D5E4" stroke-width="2"/>
+  <rect x="120" y="24" width="720" height="40" rx="12" fill="#E9EFF5"/><rect x="120" y="50" width="720" height="14" fill="#E9EFF5"/>
+  <circle cx="142" cy="44" r="6" fill="#E26D5C"/><circle cx="162" cy="44" r="6" fill="#E9B949"/><circle cx="182" cy="44" r="6" fill="#5BB974"/>
+  <rect x="210" y="33" width="420" height="22" rx="11" fill="#FFFFFF" stroke="#C7D5E4"/>
+  <text x="226" y="49" font-size="12.5" fill="#3E5468" font-family="Menlo, Consolas, monospace">http://54.188.12.34</text>
+  <!-- page -->
+  <rect x="122" y="64" width="716" height="310" fill="#E2702B"/>
+  <rect x="122" y="362" width="716" height="12" rx="0" fill="#E2702B"/>
+  <circle cx="480" cy="128" r="40" fill="none" stroke="#FFFFFF" stroke-width="5"/>
+  <circle cx="480" cy="128" r="54" fill="none" stroke="#FFFFFF" stroke-width="2" opacity=".45"/>
+  <circle cx="480" cy="128" r="68" fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity=".2"/>
+  <text x="480" y="142" font-size="38" font-weight="700" fill="#FFFFFF" text-anchor="middle">1</text>
+  <text x="480" y="238" font-size="46" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">USER07</text>
+  <text x="480" y="276" font-size="19" fill="#FFFFFF" text-anchor="middle" opacity=".92">“Plan twice, apply once”</text>
+  <text x="480" y="312" font-size="17" fill="#FFFFFF" text-anchor="middle" opacity=".92">Beacon <tspan font-weight="700">1</tspan> transmitting from</text>
+  <rect x="418" y="322" width="124" height="26" rx="6" fill="#000000" opacity=".22"/>
+  <text x="480" y="341" font-size="15" fill="#FFFFFF" text-anchor="middle" font-family="Menlo, Consolas, monospace">us-west-2a</text>
+  <!-- callouts -->
+  <g font-size="12" fill="#3E5468">
+    <text x="854" y="236" font-weight="700" fill="#1F5FAE">var.user_id</text>
+    <text x="854" y="276" font-weight="700" fill="#1F5FAE">var.crew_motto</text>
+    <text x="16" y="160" font-weight="700" fill="#1F5FAE">count.index + 1</text>
+    <text x="16" y="96" font-weight="700" fill="#1F5FAE">var.beacon_color</text>
+    <text x="854" y="340" font-weight="700" fill="#2E8B57">from AWS at boot</text>
+  </g>
+</svg>

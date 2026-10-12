@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 430" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Blue/green architecture: users hit an ALB whose listener splits traffic by weight between the blue and green target groups, each backed by an auto scaling group from the fleet module">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5B7186"/></marker>
+    <marker id="arb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1F5FAE"/></marker>
+    <marker id="arg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2E8B57"/></marker>
+  </defs>
+  <rect x="1" y="1" width="958" height="428" rx="16" fill="#F5F8FB" stroke="#D3DEEA" stroke-width="2"/>
+  <text x="32" y="38" font-size="18" font-weight="700" fill="#0E2233">What you're building (example: user07)</text>
+
+  <rect x="30" y="160" width="130" height="60" rx="30" fill="#0E2233"/>
+  <text x="95" y="195" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Users</text>
+
+  <!-- default VPC -->
+  <rect x="200" y="60" width="560" height="350" rx="14" fill="#FFFFFF" stroke="#5B7186" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <text x="218" y="82" font-size="11.5" fill="#3E5468"><tspan font-weight="700">default VPC</tspan> · looked up with data sources</text>
+
+  <!-- ALB -->
+  <rect x="220" y="140" width="190" height="100" rx="10" fill="#FFF4EA" stroke="#E2702B" stroke-width="2.5"/>
+  <text x="236" y="164" font-size="13" font-weight="800" fill="#B4521A">ALB user07-launch</text>
+  <text x="236" y="184" font-size="11" fill="#B4521A" font-family="Menlo, Consolas, monospace">listener :80 forward</text>
+  <rect x="236" y="196" width="158" height="30" rx="4" fill="#FFFFFF" stroke="#E7C3A6"/>
+  <rect x="236" y="196" width="142" height="30" rx="4" fill="#1F5FAE"/>
+  <rect x="378" y="196" width="16" height="30" fill="#2E8B57"/>
+  <text x="300" y="216" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">90 / 10</text>
+
+  <!-- fleets -->
+  <g>
+    <rect x="480" y="96" width="260" height="130" rx="12" fill="#E8F0FA" stroke="#1F5FAE" stroke-width="2.5"/>
+    <text x="496" y="120" font-size="12" font-weight="800" fill="#1F5FAE" font-family="Menlo, Consolas, monospace">module.fleet["blue"]</text>
+    <text x="496" y="140" font-size="11" fill="#3E5468">launch template · target group · ASG</text>
+    <rect x="496" y="152" width="100" height="58" rx="6" fill="#1F5FAE"/><text x="546" y="178" font-size="12" font-weight="800" fill="#FFFFFF" text-anchor="middle">BLUE</text><text x="546" y="196" font-size="10.5" fill="#D6E6FA" text-anchor="middle">v1.0</text>
+    <rect x="612" y="152" width="100" height="58" rx="6" fill="#1F5FAE" opacity=".45"/><text x="662" y="186" font-size="10.5" fill="#FFFFFF" text-anchor="middle">size 1–2</text>
+  </g>
+  <g>
+    <rect x="480" y="256" width="260" height="130" rx="12" fill="#E7F5EC" stroke="#2E8B57" stroke-width="2.5"/>
+    <text x="496" y="280" font-size="12" font-weight="800" fill="#22703F" font-family="Menlo, Consolas, monospace">module.fleet["green"]</text>
+    <text x="496" y="300" font-size="11" fill="#3E5468">launch template · target group · ASG</text>
+    <rect x="496" y="312" width="100" height="58" rx="6" fill="#2E8B57"/><text x="546" y="338" font-size="12" font-weight="800" fill="#FFFFFF" text-anchor="middle">GREEN</text><text x="546" y="356" font-size="10.5" fill="#D7F0E1" text-anchor="middle">v2.0</text>
+    <rect x="612" y="312" width="100" height="58" rx="6" fill="#2E8B57" opacity=".45"/><text x="662" y="346" font-size="10.5" fill="#FFFFFF" text-anchor="middle">size 1–2</text>
+  </g>
+
+  <!-- SG labels -->
+  <text x="220" y="264" font-size="10.5" fill="#B4521A" font-family="Menlo, Consolas, monospace">alb-sg: 80 from 0.0.0.0/0</text>
+  <text x="220" y="398" font-size="10.5" fill="#3E5468" font-family="Menlo, Consolas, monospace">app-sg: 80 from alb-sg only</text>
+
+  <!-- right column -->
+  <rect x="790" y="96" width="146" height="100" rx="10" fill="#FFFFFF" stroke="#5B7186" stroke-width="1.5"/>
+  <text x="806" y="120" font-size="11" font-weight="700" fill="#0E2233" letter-spacing="1">STATE</text>
+  <text x="806" y="140" font-size="10.5" fill="#3E5468" font-family="Menlo, Consolas, monospace">user07/launch/</text>
+  <text x="806" y="156" font-size="10.5" fill="#3E5468" font-family="Menlo, Consolas, monospace">terraform.tfstate</text>
+  <text x="806" y="178" font-size="10.5" fill="#3E5468">in your Lab 3 vault</text>
+  <rect x="790" y="216" width="146" height="100" rx="10" fill="#FFF8E1" stroke="#C79A3A" stroke-width="1.5"/>
+  <text x="806" y="240" font-size="11" font-weight="700" fill="#8A6516" letter-spacing="1">CHECK</text>
+  <text x="806" y="260" font-size="10.5" fill="#3E5468">http GET the ALB</text>
+  <text x="806" y="276" font-size="10.5" fill="#3E5468">warn if not 200</text>
+  <rect x="790" y="336" width="146" height="74" rx="10" fill="#FFFFFF" stroke="#5B7186" stroke-width="1.5"/>
+  <text x="806" y="360" font-size="11" font-weight="700" fill="#0E2233" letter-spacing="1">TESTS</text>
+  <text x="806" y="380" font-size="10.5" fill="#3E5468">mocked · offline</text>
+
+  <path d="M160,190 L216,190" stroke="#5B7186" stroke-width="2.5" marker-end="url(#ar)"/>
+  <path d="M410,170 C440,170 440,150 476,150" fill="none" stroke="#1F5FAE" stroke-width="4" marker-end="url(#arb)"/>
+  <path d="M410,214 C450,214 440,300 476,300" fill="none" stroke="#2E8B57" stroke-width="1.6" marker-end="url(#arg)"/>
+  <path d="M790,266 C620,250 470,240 412,226" fill="none" stroke="#C79A3A" stroke-width="1.5" stroke-dasharray="5 4"/>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 420 420" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Mission complete badge">
+  <circle cx="210" cy="210" r="200" fill="#0B1A2A"/>
+  <circle cx="210" cy="210" r="184" fill="none" stroke="#FFD27A" stroke-width="6"/>
+  <circle cx="210" cy="210" r="168" fill="none" stroke="#6FB1FF" stroke-width="1.5" stroke-dasharray="3 7"/>
+  <path id="top" d="M70,210 A140,140 0 0 1 350,210" fill="none"/>
+  <path id="bot" d="M64,214 A146,146 0 0 0 356,214" fill="none"/>
+  <text font-size="22" font-weight="800" fill="#FFD27A" letter-spacing="4"><textPath href="#top" startOffset="50%" text-anchor="middle">MISSION COMPLETE</textPath></text>
+  <text font-size="15" font-weight="700" fill="#6FB1FF" letter-spacing="3"><textPath href="#bot" startOffset="50%" text-anchor="middle">OPERATION BEACON · SPLASHDOWN</textPath></text>
+  <!-- star -->
+  <path d="M210,118 L231,170 L287,172 L243,206 L259,260 L210,229 L161,260 L177,206 L133,172 L189,170 Z" fill="#E2702B"/>
+  <text x="210" y="304" font-size="36" font-weight="800" fill="#FFFFFF" text-anchor="middle">0</text>
+  <text x="210" y="326" font-size="12" font-weight="700" fill="#C9D8E8" text-anchor="middle" letter-spacing="1.5">ORPHANED RESOURCES</text>
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 960 330" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="moved keeps the same object at a new address; without moved, Terraform destroys and recreates; removed makes Terraform forget the object while it keeps running">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5B4A6E"/></marker>
+    <marker id="arg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1F8A6B"/></marker>
+  </defs>
+  <rect x="1" y="1" width="958" height="328" rx="16" fill="#F7F3EC" stroke="#E2D8C6" stroke-width="2"/>
+  <text x="32" y="36" font-size="17" font-weight="700" fill="#2C2133">Changing an address: three outcomes</text>
+
+  <!-- row moved -->
+  <rect x="24" y="54" width="912" height="80" rx="10" fill="#FFFFFF" stroke="#1F8A6B" stroke-width="2"/>
+  <text x="40" y="80" font-size="13" font-weight="800" fill="#1F8A6B">WITH moved { }</text>
+  <text x="40" y="100" font-size="11" fill="#7A6A80">same queue, same messages</text>
+  <rect x="236" y="72" width="200" height="40" rx="8" fill="#F1E6F5"/><text x="336" y="97" font-size="12" text-anchor="middle" fill="#2C2133" font-family="Menlo, Consolas, monospace">aws_sqs_queue.this</text>
+  <path d="M436,92 L574,92" stroke="#1F8A6B" stroke-width="2.5" marker-end="url(#arg)"/><text x="505" y="84" font-size="11" fill="#1F8A6B" text-anchor="middle" font-family="Menlo, Consolas, monospace">has moved to</text>
+  <rect x="578" y="72" width="340" height="40" rx="8" fill="#E6F4EE"/><text x="748" y="97" font-size="12" text-anchor="middle" fill="#2C2133" font-family="Menlo, Consolas, monospace">module.relic_exhibit.aws_sqs_queue.this</text>
+
+  <!-- row without -->
+  <rect x="24" y="146" width="912" height="80" rx="10" fill="#FFFFFF" stroke="#C0392B" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="40" y="172" font-size="13" font-weight="800" fill="#A23024">WITHOUT moved</text>
+  <text x="40" y="192" font-size="11" fill="#7A6A80">new queue, messages lost</text>
+  <rect x="236" y="164" width="200" height="40" rx="8" fill="#FBE7E3"/><text x="336" y="189" font-size="12" text-anchor="middle" fill="#A23024" font-family="Menlo, Consolas, monospace">- aws_sqs_queue.this</text>
+  <text x="505" y="190" font-size="16" text-anchor="middle" fill="#A23024" font-weight="800">+</text>
+  <rect x="578" y="164" width="340" height="40" rx="8" fill="#E6F4EE"/><text x="748" y="189" font-size="12" text-anchor="middle" fill="#1F8A6B" font-family="Menlo, Consolas, monospace">+ module.relic_exhibit.aws_sqs_queue.this</text>
+
+  <!-- removed -->
+  <rect x="24" y="238" width="912" height="80" rx="10" fill="#FFFFFF" stroke="#C79A3A" stroke-width="2"/>
+  <text x="40" y="264" font-size="13" font-weight="800" fill="#8A6516">WITH removed { }</text>
+  <text x="40" y="284" font-size="11" fill="#7A6A80">Terraform lets go</text>
+  <rect x="236" y="256" width="200" height="40" rx="8" fill="#FFF5DA"/><text x="336" y="281" font-size="12" text-anchor="middle" fill="#2C2133" font-family="Menlo, Consolas, monospace">aws_ssm_parameter.relic</text>
+  <path d="M436,276 L574,276" stroke="#5B4A6E" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#ar)"/><text x="505" y="268" font-size="11" fill="#8A6516" text-anchor="middle" font-family="Menlo, Consolas, monospace">no longer managed</text>
+  <text x="590" y="272" font-size="12" fill="#2C2133">State: forgotten.</text>
+  <text x="590" y="290" font-size="12" fill="#2C2133">AWS: <tspan font-weight="700" fill="#1F8A6B">still exists</tspan> (lifecycle { destroy = false })</text>
+</svg>
