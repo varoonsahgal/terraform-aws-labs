@@ -5,6 +5,7 @@ vpc-escape-room/INSTRUCTOR-GUIDE.md
 s3-launch-week/INSTRUCTOR-GUIDE.md
 **/INSTRUCTOR-GUIDE.md
 archive/
+instructor/
 
 # Field guide source fragment (index.html is the published page)
 terraform-field-guide/field-guide.html

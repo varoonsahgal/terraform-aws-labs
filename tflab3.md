@@ -224,29 +224,15 @@ terraform init -backend-config=backend.hcl
 
 Look for: `Successfully configured the backend "s3"!`
 
-### Step 2.4 — Feel the lock 🔒
+### Step 2.4 — Prove the backend works
 
-You need **two terminals** in `~/tf-park/park`.
-
-1. **Terminal A:** `terraform apply -var="user_id=user07"`. When it asks `Enter a value:`, **don't answer**. Leave it waiting.
-2. **Terminal B:** `terraform plan -var="user_id=user07"`
-
-Terminal B fails:
-
-```text
-Error: Error acquiring the state lock
-...
-Lock Info:
-  Path:      user07-tfstate-a1b2c3/user07/park/terraform.tfstate
-  Operation: OperationTypeApply
-  Who:       you@your-vm
+```bash
+terraform plan -var="user_id=user07"
 ```
 
-3. In Terminal A, type `no`. Run the plan in Terminal B again: it works now.
+You should see `No changes`. There's nothing in the park yet, but Terraform just read (empty) state from S3. You'll see the lock in action in Part 3, once there's something to apply.
 
-> **Why it matters:** while Terraform holds the lock, it keeps a file named `terraform.tfstate.tflock` next to your state in S3. Two engineers (or two CI pipelines) can no longer apply at the same time and corrupt the state. Peek at it while Terminal A is waiting: `aws s3 ls s3://<your-bucket>/user07/park/`.
-
-**✅ Checkpoint:** you saw the lock error, and the second plan succeeded after you released it.
+**✅ Checkpoint:** `init` printed `Successfully configured the backend "s3"!` and the plan ran without errors.
 
 ---
 
@@ -392,7 +378,39 @@ terraform plan -var="user_id=user07"
 
 Look at the addresses in the plan: `module.coaster.aws_sqs_queue.line`, `module.coaster.aws_ssm_parameter.sign`… Every resource now lives inside the module's namespace.
 
-Apply it (`3 to add`), then check the sign:
+### Step 3.5 — Feel the lock 🔒
+
+You need **two terminals**, both in `~/tf-park/park`.
+
+1. **Terminal A:** `terraform apply -var="user_id=user07"`. It shows `Plan: 3 to add` and asks `Enter a value:`. **Don't answer yet.**
+2. **Terminal B:** `terraform plan -var="user_id=user07"`
+
+Terminal B fails:
+
+```text
+Error: Error acquiring the state lock
+...
+Lock Info:
+  Path:      user07-tfstate-a1b2c3/user07/park/terraform.tfstate
+  Operation: OperationTypeApply
+  Who:       you@your-vm
+```
+
+While Terminal A is still waiting, peek at the lock file in your bucket:
+
+```bash
+aws s3 ls s3://<your-bucket>/user07/park/
+```
+
+You'll see `terraform.tfstate.tflock` next to the state.
+
+3. In **Terminal A**, type `yes`. When the apply finishes, run the plan in Terminal B again: it works now, and the lock file is gone.
+
+> **Why it matters:** two engineers (or two CI pipelines) can no longer apply at the same time and corrupt the state. The lock lives right next to the state, in the same bucket.
+
+> **Note:** the lock is only held while there's work pending. An apply with nothing to change finishes immediately and never waits at the prompt.
+
+Now check the sign:
 
 ```bash
 aws ssm get-parameter --name /user07-park/rides/coaster --query Parameter.Value --output text
